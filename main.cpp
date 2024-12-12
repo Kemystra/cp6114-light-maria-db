@@ -1,8 +1,15 @@
+#include <cctype>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
+
+// Macro definitions
+// Yes technically we won't learn about this
+// This will turn an identifier into a quoted string
+// see printToken() for example usage
+#define getName(a) #a
 
 using namespace std;
 
@@ -13,7 +20,11 @@ enum TokenType {
     Keyword,
     Identifier,
     Literal,
-    Semicolon
+    Semicolon,
+    OpenBracket,
+    CloseBracket,
+    Comma,
+    Wildcard
 };
 
 // The Token 'box'
@@ -22,6 +33,23 @@ struct Token {
     string value;
 };
 
+const string KEYWORD_LIST[] = {
+    "CREATE",
+    "DATABASES",
+    "TABLE",
+    "TABLES",
+    "INSERT",
+    "INTO",
+    "VALUES",
+    "SELECT",
+    "FROM"
+};
+
+// Technically, you don't need to put the parameter name here
+// But it's good for documentation
+void stringToTokens(string rawStatement, vector<Token> &tokenList);
+Token parseWord(string &rawStatement, int &char_pos);
+void printToken(Token token);
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -30,7 +58,7 @@ int main (int argc, char *argv[]) {
     inputFile.open(inputFileName);
 
     // These if statements are called 'guard clauses'
-    // Instead of nesting code inside 'else', we can detect errors and exit/return immediately
+    // Instead of nesting code inside multiple 'if', we can detect errors and exit/return immediately
     // This is a very common programming pattern, and it helps to make code more readable
 
     if (!inputFile) {
@@ -57,11 +85,106 @@ int main (int argc, char *argv[]) {
         // We need the semicolon to mark end of statement, so I readded it
         rawStatement += ';';
 
-        // We will be returning by reference after lexer, so we gonna store it here
-        vector<Token> statement;
+        vector<Token> statementTokens;
+        stringToTokens(rawStatement, statementTokens);
+
+        for (int i = 0; i < statementTokens.size(); i++) {
+            cout << "----------------------\n";
+            printToken(statementTokens[i]);
+        }
     }
 
-    
 
     return 0;
+}
+
+
+// -- The lexer --
+void stringToTokens(string rawStatement, vector<Token> &tokenList) {
+    int char_pos = 0;
+    while (char_pos < rawStatement.length()) {
+        Token token = Token();
+
+        // If it's whitespace, skip it
+        if (isspace(rawStatement[char_pos])) {
+            char_pos++;
+            continue;
+        }
+
+        // If the character is alphanumeric (letters or numbers)
+        // parse it as words
+        // MUST BE BEFORE CHECKING SPECIAL CHARACTERS
+        // see parseWord() for more info
+        if (isalnum(rawStatement[char_pos])) {
+            token = parseWord(rawStatement, char_pos);
+        }
+
+        // Check for special characters
+        switch (rawStatement[char_pos]) {
+            case '(':
+                token.type = TokenType::OpenBracket;
+                token.value = '(';
+                break;
+            case ')':
+                token.type = TokenType::CloseBracket;
+                token.value = ')';
+                break;
+            case ';':
+                token.type = TokenType::Semicolon;
+                token.value = ';';
+                break;
+            case ',':
+                token.type = TokenType::Comma;
+                token.value = ',';
+                break;
+            case '*':
+                token.type = TokenType::Wildcard;
+                token.value = '*';
+                break;
+        }
+
+        tokenList.push_back(token);
+
+        char_pos++;
+    }
+}
+
+
+// Note that we also carried the full statement and the current character position
+// This is to ensure that after parsing a word, we can advance to the next character after the word
+Token parseWord(string &rawStatement, int &char_pos) {
+    string word = "";
+    Token token = Token();
+
+    // While the current character is still alphanumeric, keep adding to word
+    // Otherwise break the loop
+    // The nice thing is that the char_pos variable will then point to the next character after the current word
+    // So they can be matched for special characters in stringToToken()
+    while (isalnum(rawStatement[char_pos])) {
+        char current_char = rawStatement[char_pos];
+        word += current_char;
+
+        char_pos++;
+    }
+
+    token.value = word;
+
+    for (int i = 0; i < size(KEYWORD_LIST); i++) {
+        // Another guard clause
+        // Return immediately if a match is found
+        if (word == KEYWORD_LIST[i]) {
+            token.type = TokenType::Keyword;
+            return token;
+        }
+    }
+
+    token.type = TokenType::Identifier;
+    return token;
+}
+
+
+// helper to print tokens to terminal
+void printToken(Token token) {
+    cout << "Type: " << token.type << "\n";
+    cout << "Value: " << token.value << "\n";
 }
