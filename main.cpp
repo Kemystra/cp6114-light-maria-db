@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-// Macro definitions
+// -- Macro definitions --
 // Yes technically we won't learn about this
 // This will turn an identifier into a quoted string
 // see printToken() for example usage
@@ -45,11 +45,13 @@ const string KEYWORD_LIST[] = {
     "FROM"
 };
 
+// -- Function Prototype --
 // Technically, you don't need to put the parameter name here
 // But it's good for documentation
 void stringToTokens(string rawStatement, vector<Token> &tokenList);
 Token parseWord(string &rawStatement, int &char_pos);
 void printToken(Token token);
+string stringifyTokenType(TokenType tokenType);
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -183,8 +185,41 @@ Token parseWord(string &rawStatement, int &char_pos) {
 }
 
 
+string stringifyTokenType(TokenType tokenType) {
+    string str;
+    switch (tokenType) {
+        case TokenType::Keyword:
+            str = "Keyword";
+            break;
+        case TokenType::Identifier:
+            str = "Identifier";
+            break;
+        case TokenType::Literal:
+            str = "Literal";
+            break;
+        case TokenType::Semicolon:
+            str = "Semicolon";
+            break;
+        case TokenType::OpenBracket:
+            str = "OpenBracket";
+            break;
+        case TokenType::CloseBracket:
+            str = "CloseBracket";
+            break;
+        case TokenType::Comma:
+            str = "Comma";
+            break;
+        case TokenType::Wildcard:
+            str = "Wildcard";
+            break;
+    }
+
+    return str;
+}
+
+
 // helper to print tokens to terminal
 void printToken(Token token) {
-    cout << "Type: " << token.type << "\n";
+    cout << "Type: " << stringifyTokenType(token.type) << "\n";
     cout << "Value: " << token.value << "\n";
 }
