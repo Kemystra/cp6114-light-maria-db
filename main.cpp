@@ -5,12 +5,6 @@
 #include <string>
 #include <vector>
 
-// -- Macro definitions --
-// Yes technically we won't learn about this
-// This will turn an identifier into a quoted string
-// see printToken() for example usage
-#define getName(a) #a
-
 using namespace std;
 
 
