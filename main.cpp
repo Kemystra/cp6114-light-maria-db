@@ -48,6 +48,7 @@ const string KEYWORD_LIST[] = {
 void stringToTokens(string rawStatement, vector<Token> &tokenList);
 Token parseWord(string &rawStatement, int &char_pos);
 Token parseNumberLiteral(string &rawStatement, int &char_pos);
+Token parseStringLiteral(string &rawStatement, int &char_pos);
 
 string stringifyTokenType(TokenType tokenType);
 void printToken(Token token);
@@ -127,6 +128,21 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
         // Check for number literals
         if (isdigit(current_char)) {
             token = parseNumberLiteral(rawStatement, char_pos);
+            tokenList.push_back(token);
+            continue;
+        }
+
+        // Check for string literals, using quotation marks
+        if (current_char == '\'' || current_char == '"') {
+            // We only want the string values, not the quotation mark
+            // So we skip it
+            char_pos++;
+            token = parseStringLiteral(rawStatement, char_pos);
+
+            // Again, after parsing, char_pos will point to the character AFTER the string literal
+            // Which is the closing quotation mark
+            // We will ignore that too
+            char_pos++;
             tokenList.push_back(token);
             continue;
         }
@@ -228,6 +244,26 @@ Token parseNumberLiteral(string &rawStatement, int &char_pos) {
 
         char_pos++;
         current_digit = rawStatement[char_pos];
+    }
+
+    token.type = TokenType::Literal;
+    token.value = value;
+
+    return token;
+}
+
+
+Token parseStringLiteral(string &rawStatement, int &char_pos) {
+    Token token = Token();
+    string value = "";
+    char current_char = rawStatement[char_pos];
+
+    // We use '&&' operator so that either one can trigger to terminate the loop
+    while (current_char != '\'' && current_char != '"') {
+        value += current_char;
+
+        char_pos++;
+        current_char = rawStatement[char_pos];
     }
 
     token.type = TokenType::Literal;
