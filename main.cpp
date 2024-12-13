@@ -140,6 +140,9 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
                 token.type = TokenType::Wildcard;
                 token.value = '*';
                 break;
+            default:
+                cout << "Unknown token. Exiting...\n";
+                exit(1);
         }
 
         tokenList.push_back(token);
