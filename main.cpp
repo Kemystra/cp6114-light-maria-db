@@ -49,6 +49,7 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList);
 Token parseWord(string &rawStatement, int &char_pos);
 Token parseNumberLiteral(string &rawStatement, int &char_pos);
 Token parseStringLiteral(string &rawStatement, int &char_pos);
+Token parseSpecialCharacters(string &rawStatement, int &char_pos);
 
 string stringifyTokenType(TokenType tokenType);
 void printToken(Token token);
@@ -92,6 +93,7 @@ int main (int argc, char *argv[]) {
         stringToTokens(rawStatement, statementTokens);
 
         for (int i = 0; i < statementTokens.size(); i++) {
+            // Temporary code to print out the tokens
             cout << "\n";
             cout << "Token #" << i+1 << "\n";
             cout << "----------------------\n";
@@ -117,72 +119,28 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
         // so we use isalpha() here instead of alnum() (which checks for letters and numbers)
         if (isalpha(current_char) || current_char == '_' || current_char == '.') {
             token = parseWord(rawStatement, char_pos);
-
-            // This is important, to avoid re-checking for special characters
-            // Note that we don't increment char_pos here
-            // This is because parseWord() will point char_pos to the character AFTER the word
-            tokenList.push_back(token);
-            continue;
         }
-
         // Check for number literals
-        if (isdigit(current_char)) {
+        else if (isdigit(current_char)) {
             token = parseNumberLiteral(rawStatement, char_pos);
-            tokenList.push_back(token);
-            continue;
         }
-
         // Check for string literals, using quotation marks
-        if (current_char == '\'' || current_char == '"') {
-            // We only want the string values, not the quotation mark
-            // So we skip it
-            char_pos++;
+        else if (current_char == '\'' || current_char == '"') {
             token = parseStringLiteral(rawStatement, char_pos);
-
-            // Again, after parsing, char_pos will point to the character AFTER the string literal
-            // Which is the closing quotation mark
-            // We will ignore that too
-            char_pos++;
-            tokenList.push_back(token);
-            continue;
         }
-
         // If it's whitespace, skip it
-        if (isspace(current_char)) {
+        else if (isspace(current_char)) {
             char_pos++;
             continue;
         }
-
-        // Check for special characters
-        switch (current_char) {
-            case '(':
-                token.type = TokenType::OpenBracket;
-                token.value = '(';
-                break;
-            case ')':
-                token.type = TokenType::CloseBracket;
-                token.value = ')';
-                break;
-            case ';':
-                token.type = TokenType::Semicolon;
-                token.value = ';';
-                break;
-            case ',':
-                token.type = TokenType::Comma;
-                token.value = ',';
-                break;
-            case '*':
-                token.type = TokenType::Wildcard;
-                token.value = '*';
-                break;
-            default:
-                cout << "Unknown token. Exiting...\n";
-                exit(1);
+        else {
+            token = parseSpecialCharacters(rawStatement, char_pos);
         }
+
+        // All parse*() functions automatically point char_pos to the next character AFTER parsing
+        // so we don't increment char_pos here except when checking for whitespace
 
         tokenList.push_back(token);
-
-        char_pos++;
     }
 }
 
@@ -256,6 +214,10 @@ Token parseNumberLiteral(string &rawStatement, int &char_pos) {
 Token parseStringLiteral(string &rawStatement, int &char_pos) {
     Token token = Token();
     string value = "";
+
+    // We only want the string values, not the quotation mark
+    // So we skip it
+    char_pos++;
     char current_char = rawStatement[char_pos];
 
     // We use '&&' operator so that either one can trigger to terminate the loop
@@ -269,6 +231,46 @@ Token parseStringLiteral(string &rawStatement, int &char_pos) {
     token.type = TokenType::Literal;
     token.value = value;
 
+    // After parsing, char_pos will point to the character AFTER the string literal
+    // Which is the closing quotation mark
+    // We will ignore that too
+    char_pos++;
+
+    return token;
+}
+
+
+Token parseSpecialCharacters(string &rawStatement, int &char_pos) {
+    char current_char = rawStatement[char_pos];
+    Token token = Token();
+
+    // Since each character has, well, 1 character
+    // We don't need a loop
+    switch (current_char) {
+        case '(':
+            token.type = TokenType::OpenBracket;
+            break;
+        case ')':
+            token.type = TokenType::CloseBracket;
+            break;
+        case ';':
+            token.type = TokenType::Semicolon;
+            break;
+        case ',':
+            token.type = TokenType::Comma;
+            break;
+        case '*':
+            token.type = TokenType::Wildcard;
+            break;
+        default:
+            cout << "Unknown token. Exiting...\n";
+            exit(1);
+    }
+
+    // Point to the next character
+    char_pos++;
+
+    token.value = current_char;
     return token;
 }
 
