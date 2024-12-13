@@ -47,6 +47,7 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList);
 Token parseWord(string &rawStatement, int &char_pos);
 void printToken(Token token);
 string stringifyTokenType(TokenType tokenType);
+bool isValidWordChar(char ch);
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -101,23 +102,24 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
     int char_pos = 0;
     while (char_pos < rawStatement.length()) {
         Token token = Token();
+        char current_char = rawStatement[char_pos];
 
         // If it's whitespace, skip it
-        if (isspace(rawStatement[char_pos])) {
+        if (isspace(current_char)) {
             char_pos++;
             continue;
         }
 
-        // If the character is alphanumeric (letters or numbers)
+        // If the character is alphanumeric (letters or numbers) or a dot or underscore
         // parse it as words
         // MUST BE BEFORE CHECKING SPECIAL CHARACTERS
         // see parseWord() for more info
-        if (isalnum(rawStatement[char_pos])) {
+        if (isValidWordChar(current_char)) {
             token = parseWord(rawStatement, char_pos);
         }
 
         // Check for special characters
-        switch (rawStatement[char_pos]) {
+        switch (current_char) {
             case '(':
                 token.type = TokenType::OpenBracket;
                 token.value = '(';
@@ -147,18 +149,28 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
 }
 
 
+// Check if a character is a valid part of a word
+bool isValidWordChar(char ch) {
+    return isalnum(ch) || ch == '_' || ch == '.';
+}
+
+
 // Note that we also carried the full statement and the current character position
 // This is to ensure that after parsing a word, we can advance to the next character after the word
 Token parseWord(string &rawStatement, int &char_pos) {
     string word = "";
     Token token = Token();
+    char current_char = rawStatement[char_pos];
+    bool hasDot = false;
 
-    // While the current character is still alphanumeric, keep adding to word
+    // While the current character is still valid, keep adding to word
     // Otherwise break the loop
-    // The nice thing is that the char_pos variable will then point to the next character after the current word
-    // So they can be matched for special characters in stringToToken()
-    while (isalnum(rawStatement[char_pos])) {
-        char current_char = rawStatement[char_pos];
+    while (isValidWordChar(current_char)) {
+        current_char = rawStatement[char_pos];
+
+        if (current_char == '.')
+            hasDot = true;
+
         word += current_char;
 
         char_pos++;
@@ -166,15 +178,23 @@ Token parseWord(string &rawStatement, int &char_pos) {
 
     token.value = word;
 
+    // More guard clauses
+
+    // Check if it's a filename
+    if (hasDot) {
+        token.type = TokenType::Filename;
+        return token;
+    }
+
+    // Check if it's a keyword
     for (int i = 0; i < size(KEYWORD_LIST); i++) {
-        // Another guard clause
-        // Return immediately if a match is found
         if (word == KEYWORD_LIST[i]) {
             token.type = TokenType::Keyword;
             return token;
         }
     }
 
+    // If nothing else, then it must be an identifier
     token.type = TokenType::Identifier;
     return token;
 }
