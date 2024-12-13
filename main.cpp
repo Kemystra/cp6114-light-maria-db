@@ -37,7 +37,9 @@ const string KEYWORD_LIST[] = {
     "INTO",
     "VALUES",
     "SELECT",
-    "FROM"
+    "FROM",
+    "INT",
+    "TEXT"
 };
 
 // -- Function Prototype --
