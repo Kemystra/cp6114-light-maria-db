@@ -112,7 +112,7 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
         char current_char = rawStatement[char_pos];
 
         // If the character is a letter or an underscore or a dot
-        // parse the rest of them as words
+        // parse the rest of them as 'word'
         // Note that the first letter of a 'word' cannot be a number
         // so we use isalpha() here instead of alnum() (which checks for letters and numbers)
         if (isalpha(current_char) || current_char == '_' || current_char == '.') {
