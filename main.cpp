@@ -110,10 +110,13 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
         // so we use isalpha() here instead of alnum() (which checks for letters and numbers)
         if (isalpha(current_char) || current_char == '_' || current_char == '.') {
             token = parseWord(rawStatement, char_pos);
+            tokenList.push_back(token);
+            continue;
 
-            // We don't increment char_pos or skip the loop here
-            // because parseWord() will always stop AFTER the last word's character
-            // so char_pos is already pointing to the next character
+            // Push the token directly, and skip the rest of the loop
+            // This is important, to avoid re-checking for special characters
+            // Note that we don't increment char_pos here
+            // This is because parseWord() will point char_pos to the character AFTER the word
         }
 
         // If it's whitespace, skip it
@@ -169,14 +172,13 @@ Token parseWord(string &rawStatement, int &char_pos) {
     // Valid characters here are letters, numbers, underscores, and dot
     // Note that numbers can be used here if it's not the first character
     while (isalnum(current_char) || current_char == '_' || current_char == '.') {
-        current_char = rawStatement[char_pos];
-
         if (current_char == '.')
             hasDot = true;
 
         word += current_char;
 
         char_pos++;
+        current_char = rawStatement[char_pos];
     }
 
     token.value = word;
