@@ -42,6 +42,11 @@ const string KEYWORD_LIST[] = {
     "TEXT"
 };
 
+// Even though each string has a different sizes
+// The class string only stores the POINTER to the actual string
+// so the size is constant
+const int KEYWORD_LIST_SIZE = sizeof(KEYWORD_LIST) / sizeof(KEYWORD_LIST[0]);
+
 // -- Function Prototype --
 // Technically, you don't need to put the parameter name here
 // But it's good for documentation
@@ -178,7 +183,7 @@ Token parseWord(string &rawStatement, int &char_pos) {
     }
 
     // Check if it's a keyword
-    for (int i = 0; i < size(KEYWORD_LIST); i++) {
+    for (int i = 0; i < KEYWORD_LIST_SIZE; i++) {
         if (word == KEYWORD_LIST[i]) {
             token.type = TokenType::Keyword;
             return token;
