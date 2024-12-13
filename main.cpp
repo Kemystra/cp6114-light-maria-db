@@ -45,8 +45,10 @@ const string KEYWORD_LIST[] = {
 // But it's good for documentation
 void stringToTokens(string rawStatement, vector<Token> &tokenList);
 Token parseWord(string &rawStatement, int &char_pos);
-void printToken(Token token);
+Token parseNumberLiteral(string &rawStatement, int &char_pos);
+
 string stringifyTokenType(TokenType tokenType);
+void printToken(Token token);
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -116,6 +118,13 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
             // This is important, to avoid re-checking for special characters
             // Note that we don't increment char_pos here
             // This is because parseWord() will point char_pos to the character AFTER the word
+            tokenList.push_back(token);
+            continue;
+        }
+
+        // Check for number literals
+        if (isdigit(current_char)) {
+            token = parseNumberLiteral(rawStatement, char_pos);
             tokenList.push_back(token);
             continue;
         }
@@ -202,6 +211,26 @@ Token parseWord(string &rawStatement, int &char_pos) {
 
     // If nothing else, then it must be an identifier
     token.type = TokenType::Identifier;
+    return token;
+}
+
+
+Token parseNumberLiteral(string &rawStatement, int &char_pos) {
+    Token token = Token();
+    string value = "";
+    char current_digit = rawStatement[char_pos];
+
+    // Notice that it's the same format as parseWord() above
+    while (isdigit(current_digit)) {
+        value += current_digit;
+
+        char_pos++;
+        current_digit = rawStatement[char_pos];
+    }
+
+    token.type = TokenType::Literal;
+    token.value = value;
+
     return token;
 }
 
