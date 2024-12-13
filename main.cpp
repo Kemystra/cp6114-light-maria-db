@@ -204,7 +204,7 @@ Token parseWord(string &rawStatement, int &char_pos) {
 
 
 // There may be a way to do this concisely
-// But they might be too complicated
+// But hey, it works
 string stringifyTokenType(TokenType tokenType) {
     string str;
     switch (tokenType) {
