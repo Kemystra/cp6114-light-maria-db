@@ -81,6 +81,7 @@ int main (int argc, char *argv[]) {
     while (getline(inputFile, rawStatement, ';')) {
         // We need the semicolon to mark end of statement, so I readded it
         rawStatement += ';';
+        cout << rawStatement << '\n';
 
         vector<Token> statementTokens;
         stringToTokens(rawStatement, statementTokens);
