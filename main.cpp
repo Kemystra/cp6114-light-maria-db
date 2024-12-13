@@ -13,6 +13,7 @@ using namespace std;
 enum TokenType {
     Keyword,
     Identifier,
+    Filename,
     Literal,
     Semicolon,
     OpenBracket,
@@ -179,6 +180,8 @@ Token parseWord(string &rawStatement, int &char_pos) {
 }
 
 
+// There may be a way to do this concisely
+// But they might be too complicated
 string stringifyTokenType(TokenType tokenType) {
     string str;
     switch (tokenType) {
@@ -187,6 +190,9 @@ string stringifyTokenType(TokenType tokenType) {
             break;
         case TokenType::Identifier:
             str = "Identifier";
+            break;
+        case TokenType::Filename:
+            str = "Filename";
             break;
         case TokenType::Literal:
             str = "Literal";
