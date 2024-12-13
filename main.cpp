@@ -87,6 +87,8 @@ int main (int argc, char *argv[]) {
         stringToTokens(rawStatement, statementTokens);
 
         for (int i = 0; i < statementTokens.size(); i++) {
+            cout << "\n";
+            cout << "Token #" << i+1 << "\n";
             cout << "----------------------\n";
             printToken(statementTokens[i]);
         }
