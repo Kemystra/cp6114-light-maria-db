@@ -47,7 +47,6 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList);
 Token parseWord(string &rawStatement, int &char_pos);
 void printToken(Token token);
 string stringifyTokenType(TokenType tokenType);
-bool isValidWordChar(char ch);
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -110,11 +109,11 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
             continue;
         }
 
-        // If the character is alphanumeric (letters or numbers) or a dot or underscore
-        // parse it as words
+        // If the character is a letter
+        // parse the rest of them as words
         // MUST BE BEFORE CHECKING SPECIAL CHARACTERS
         // see parseWord() for more info
-        if (isValidWordChar(current_char)) {
+        if (isalpha(current_char)) {
             token = parseWord(rawStatement, char_pos);
         }
 
@@ -152,12 +151,6 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
 }
 
 
-// Check if a character is a valid part of a word
-bool isValidWordChar(char ch) {
-    return isalnum(ch) || ch == '_' || ch == '.';
-}
-
-
 // Note that we also carried the full statement and the current character position
 // This is to ensure that after parsing a word, we can advance to the next character after the word
 Token parseWord(string &rawStatement, int &char_pos) {
@@ -168,7 +161,8 @@ Token parseWord(string &rawStatement, int &char_pos) {
 
     // While the current character is still valid, keep adding to word
     // Otherwise break the loop
-    while (isValidWordChar(current_char)) {
+    // Valid characters here are letters, numbers, underscores, and dot
+    while (isalnum(current_char) || current_char == '_' || current_char == '.') {
         current_char = rawStatement[char_pos];
 
         if (current_char == '.')
