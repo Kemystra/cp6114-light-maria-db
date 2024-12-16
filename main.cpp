@@ -22,27 +22,7 @@
 using namespace std;
 
 
-// Think of 'enum' as choices.
-// A variable with a type TokenType can only have the value Identifier or Literal or... etc.
-enum TokenType {
-    Keyword,
-    Identifier,
-    Filename,
-    Literal,
-    Semicolon,
-    OpenBracket,
-    CloseBracket,
-    Comma,
-    Wildcard
-};
-
-// The Token 'box'
-struct Token {
-    TokenType type;
-    string value;
-};
-
-const string KEYWORD_LIST[] = {
+const string KEYWORDS[] = {
     "CREATE",
     "DATABASES",
     "TABLE",
@@ -55,6 +35,18 @@ const string KEYWORD_LIST[] = {
     "INT",
     "TEXT"
 };
+
+// Even though each string has a different sizes
+// The class string only stores the POINTER to the actual string
+// so the size is constant
+const int KEYWORDS_SIZE = sizeof(KEYWORDS) / sizeof(KEYWORDS[0]);
+
+// Open and close parentheses, wildcard, comma, and semicolon
+const char SPECIAL_CHARACTERS[] = {
+    '(', ')', '*', ',', ';'
+};
+
+const int SPECIAL_CHARACTERS_SIZE = sizeof(SPECIAL_CHARACTERS) / sizeof(SPECIAL_CHARACTERS[0]);
 
 // Fill this one
 struct fieldData {
@@ -74,22 +66,15 @@ class Table {
         void updateRows() {}
 };
 
-// Even though each string has a different sizes
-// The class string only stores the POINTER to the actual string
-// so the size is constant
-const int KEYWORD_LIST_SIZE = sizeof(KEYWORD_LIST) / sizeof(KEYWORD_LIST[0]);
-
 // -- Function Prototype --
 // Technically, you don't need to put the parameter name here
 // But it's good for documentation
-void stringToTokens(string rawStatement, vector<Token> &tokenList);
-Token parseWord(string &rawStatement, int &char_pos);
-Token parseNumberLiteral(string &rawStatement, int &char_pos);
-Token parseStringLiteral(string &rawStatement, int &char_pos);
-Token parseSpecialCharacters(string &rawStatement, int &char_pos);
+void stringToTokens(string rawStatement, vector<string> &tokenList);
+string parseWord(string &rawStatement, int &char_pos);
+string parseNumberLiteral(string &rawStatement, int &char_pos);
+string parseStringLiteral(string &rawStatement, int &char_pos);
+string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
-string stringifyTokenType(TokenType tokenType);
-void printToken(Token token);
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -126,16 +111,14 @@ int main (int argc, char *argv[]) {
         rawStatement += ';';
         cout << rawStatement << '\n';
 
-        vector<Token> statementTokens;
+        vector<string> statementTokens;
         stringToTokens(rawStatement, statementTokens);
 
         for (int i = 0; i < statementTokens.size(); i++) {
             // Temporary code to print out the tokens
-            cout << "\n";
-            cout << "Token #" << i+1 << "\n";
-            cout << "----------------------\n";
-            printToken(statementTokens[i]);
+            cout << "Token #" << i+1 << ": " << statementTokens[i] << "\n";
         }
+        cout << '\n';
     }
 
 
@@ -144,10 +127,10 @@ int main (int argc, char *argv[]) {
 
 
 // -- The lexer --
-void stringToTokens(string rawStatement, vector<Token> &tokenList) {
+void stringToTokens(string rawStatement, vector<string> &tokenList) {
     int char_pos = 0;
     while (char_pos < rawStatement.length()) {
-        Token token = Token();
+        string token = "";
         char current_char = rawStatement[char_pos];
 
         // If the character is a letter or an underscore or a dot
@@ -184,52 +167,26 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
 
 // Note that we also carried the full statement and the current character position
 // This is to ensure that after parsing a word, we can advance to the next character after the word
-Token parseWord(string &rawStatement, int &char_pos) {
-    string word = "";
-    Token token = Token();
+string parseWord(string &rawStatement, int &char_pos) {
+    string token = "";
     char current_char = rawStatement[char_pos];
-    bool hasDot = false;
 
     // While the current character is still valid, keep adding to word
     // Otherwise break the loop
     // Valid characters here are letters, numbers, underscores, and dot
     // Note that numbers can be used here if it's not the first character
     while (isalnum(current_char) || current_char == '_' || current_char == '.') {
-        if (current_char == '.')
-            hasDot = true;
-
-        word += current_char;
+        token += current_char;
 
         char_pos++;
         current_char = rawStatement[char_pos];
     }
 
-    token.value = word;
-
-    // More guard clauses
-
-    // Check if it's a filename
-    if (hasDot) {
-        token.type = TokenType::Filename;
-        return token;
-    }
-
-    // Check if it's a keyword
-    for (int i = 0; i < KEYWORD_LIST_SIZE; i++) {
-        if (word == KEYWORD_LIST[i]) {
-            token.type = TokenType::Keyword;
-            return token;
-        }
-    }
-
-    // If nothing else, then it must be an identifier
-    token.type = TokenType::Identifier;
     return token;
 }
 
 
-Token parseNumberLiteral(string &rawStatement, int &char_pos) {
-    Token token = Token();
+string parseNumberLiteral(string &rawStatement, int &char_pos) {
     string value = "";
     char current_digit = rawStatement[char_pos];
 
@@ -241,21 +198,28 @@ Token parseNumberLiteral(string &rawStatement, int &char_pos) {
         current_digit = rawStatement[char_pos];
     }
 
-    token.type = TokenType::Literal;
-    token.value = value;
-
-    return token;
+    return value;
 }
 
 
-Token parseStringLiteral(string &rawStatement, int &char_pos) {
-    Token token = Token();
+string parseStringLiteral(string &rawStatement, int &char_pos) {
     string value = "";
-
-    // We only want the string values, not the quotation mark
-    // So we skip it
-    char_pos++;
     char current_char = rawStatement[char_pos];
+
+    // current_char right now is the quotation mark
+    // since it might be single or double quote, we will be storing it for later
+    char quotation_mark = current_char;
+
+    // we manually add this. see below for why
+    value += quotation_mark;
+
+    // Because the char_pos is currently pointing to the quotation mark,
+    // we have to point it to the next character
+    // or else the while loop will not run
+    // and it will go back to stringToToken() but still pointing to the quotation mark
+    // creating an endless loop
+    char_pos++;
+    current_char = rawStatement[char_pos];
 
     // We use '&&' operator so that either one can trigger to terminate the loop
     while (current_char != '\'' && current_char != '"') {
@@ -265,97 +229,34 @@ Token parseStringLiteral(string &rawStatement, int &char_pos) {
         current_char = rawStatement[char_pos];
     }
 
-    token.type = TokenType::Literal;
-    token.value = value;
-
-    // After parsing, char_pos will point to the character AFTER the string literal
-    // Which is the closing quotation mark
-    // We will ignore that too
+    // Again, skip the current quotation mark to avoid endless loop
     char_pos++;
 
-    return token;
+    // Since we skip the closing of quotation mark, we have to re-add it manually
+    // which is why we store it BEFORE parsing
+    value += quotation_mark;
+
+    return value;
 }
 
 
-Token parseSpecialCharacters(string &rawStatement, int &char_pos) {
+string parseSpecialCharacters(string &rawStatement, int &char_pos) {
     char current_char = rawStatement[char_pos];
-    Token token = Token();
 
-    // Since each character has, well, 1 character
-    // We don't need a loop
-    switch (current_char) {
-        case '(':
-            token.type = TokenType::OpenBracket;
-            break;
-        case ')':
-            token.type = TokenType::CloseBracket;
-            break;
-        case ';':
-            token.type = TokenType::Semicolon;
-            break;
-        case ',':
-            token.type = TokenType::Comma;
-            break;
-        case '*':
-            token.type = TokenType::Wildcard;
-            break;
-        default:
-            cout << "Unknown token. Exiting...\n";
-            exit(1);
+    // I HAVE TO PUT THIS CUZ THERE'S NO GUD WAY TO CONVERT CHAR TO STRING
+    // IT'S SOO GODDAMN UGLY
+    string s = "";
+
+    for (int i = 0; i < SPECIAL_CHARACTERS_SIZE; i++) {
+        if (current_char == SPECIAL_CHARACTERS[i]) {
+            char_pos++;
+            return s + current_char;
+        }
     }
 
-    // Point to the next character
-    char_pos++;
-
-    token.value = current_char;
-    return token;
+    cout << "Unknown token. Exiting...\n";
+    exit(1);
 }
-
-
-// There may be a way to do this concisely
-// But hey, it works
-string stringifyTokenType(TokenType tokenType) {
-    string str;
-    switch (tokenType) {
-        case TokenType::Keyword:
-            str = "Keyword";
-            break;
-        case TokenType::Identifier:
-            str = "Identifier";
-            break;
-        case TokenType::Filename:
-            str = "Filename";
-            break;
-        case TokenType::Literal:
-            str = "Literal";
-            break;
-        case TokenType::Semicolon:
-            str = "Semicolon";
-            break;
-        case TokenType::OpenBracket:
-            str = "OpenBracket";
-            break;
-        case TokenType::CloseBracket:
-            str = "CloseBracket";
-            break;
-        case TokenType::Comma:
-            str = "Comma";
-            break;
-        case TokenType::Wildcard:
-            str = "Wildcard";
-            break;
-    }
-
-    return str;
-}
-
-
-// helper to print tokens to terminal
-void printToken(Token token) {
-    cout << "Type: " << stringifyTokenType(token.type) << "\n";
-    cout << "Value: " << token.value << "\n";
-}
-
 
 
 // -- Processing functions --
