@@ -37,3 +37,7 @@
 
 *.mdb
 !samples/*.mdb
+
+
+# -- -- # 
+/.vscode

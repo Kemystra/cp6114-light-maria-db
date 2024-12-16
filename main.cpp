@@ -1,3 +1,17 @@
+// ********************************************************************************
+
+// Program : main.cpp
+// Course : CCP6114 Programming Fundamentals
+// Lecture Class : TC6L
+// Tutorial Section : T11L
+// Trimester : 2430 
+// Member_1 : 242UC240JF | Izzminhal Akmal Bin Norhisyam | izzminhal.akmal.norhisyam1@student.mmu.edu.my | +60 11-4034 8650
+// Member_1 : 243UC247CJ | Aimi Binti Mohd Faizal | aimi.mohd.faizal@student.mmu.edu.my | +60 13-907 1648
+// Member_1 : 243UC247DP | Muhammad Afiq Bin Shahrin | muhammad.afiq.shahrin@student.mmu.edu.my | +60 18-977 0080
+// Member_1 : 242UC240JF | Low Eng Sern | low.eng.sern@student.mmu.edu.my | +60 11-2150 0218
+
+// ********************************************************************************
+
 #include <cctype>
 #include <cstdlib>
 #include <iostream>
