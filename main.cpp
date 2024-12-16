@@ -12,7 +12,6 @@
 
 // ********************************************************************************
 
-#include <cctype>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
