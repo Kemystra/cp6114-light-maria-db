@@ -56,10 +56,27 @@ struct fieldData {
 // The actual database
 class Table {
     private:
+        // Anything under private can only be accessed by the class itself
         vector<fieldData> fieldDataList;
         vector<vector<string>> dataStr;
         vector<vector<int>> dataInt;
     public:
+        // Anything under public can be accessed outside of the class
+        string name;
+
+        // This is a constructor
+        // This is what allows you to create a class
+        // It can also take parameters like functions do
+        Table(string s) {
+            name = s;
+
+            // We just need to create empty fields here
+            fieldDataList = vector<fieldData>();
+            dataStr = vector<vector<string>>();
+            dataInt = vector<vector<int>>();
+        }
+
+        // These are methods; functions that automatically have access to the class Table
         void selectRows() {}
         void deleteRows() {}
         void updateRows() {}
