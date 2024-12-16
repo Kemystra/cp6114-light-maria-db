@@ -56,6 +56,24 @@ const string KEYWORD_LIST[] = {
     "TEXT"
 };
 
+// Fill this one
+struct fieldData {
+
+};
+
+// Table class definition
+// The actual database
+class Table {
+    private:
+        vector<fieldData> fieldDataList;
+        vector<vector<string>> dataStr;
+        vector<vector<int>> dataInt;
+    public:
+        void selectRows() {}
+        void deleteRows() {}
+        void updateRows() {}
+};
+
 // Even though each string has a different sizes
 // The class string only stores the POINTER to the actual string
 // so the size is constant
@@ -336,4 +354,23 @@ string stringifyTokenType(TokenType tokenType) {
 void printToken(Token token) {
     cout << "Type: " << stringifyTokenType(token.type) << "\n";
     cout << "Value: " << token.value << "\n";
+}
+
+
+
+// -- Processing functions --
+void createTable() {
+
+}
+
+void printDatabases() {
+
+}
+
+void insertIntoTable() {
+
+}
+
+void selectFromTable() {
+
 }
