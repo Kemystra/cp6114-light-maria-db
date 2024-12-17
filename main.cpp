@@ -153,6 +153,12 @@ int main (int argc, char *argv[]) {
             cout << "Token #" << i+1 << ": " << statementTokens[i] << "\n";
         }
         cout << '\n';
+
+        // Empty table to store value
+        Table table("");
+        if (statementTokens[1] == "TABLE") {
+            createTable(statementTokens, table);
+        }
     }
 
 
