@@ -12,7 +12,6 @@
 
 // ********************************************************************************
 
-#include <cctype>
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -22,27 +21,7 @@
 using namespace std;
 
 
-// Think of 'enum' as choices.
-// A variable with a type TokenType can only have the value Identifier or Literal or... etc.
-enum TokenType {
-    Keyword,
-    Identifier,
-    Filename,
-    Literal,
-    Semicolon,
-    OpenBracket,
-    CloseBracket,
-    Comma,
-    Wildcard
-};
-
-// The Token 'box'
-struct Token {
-    TokenType type;
-    string value;
-};
-
-const string KEYWORD_LIST[] = {
+const string KEYWORDS[] = {
     "CREATE",
     "DATABASES",
     "TABLE",
@@ -59,19 +38,77 @@ const string KEYWORD_LIST[] = {
 // Even though each string has a different sizes
 // The class string only stores the POINTER to the actual string
 // so the size is constant
-const int KEYWORD_LIST_SIZE = sizeof(KEYWORD_LIST) / sizeof(KEYWORD_LIST[0]);
+const int KEYWORDS_SIZE = sizeof(KEYWORDS) / sizeof(KEYWORDS[0]);
+
+// Open and close parentheses, wildcard, comma, and semicolon
+const char SPECIAL_CHARACTERS[] = {
+    '(', ')', '*', ',', ';'
+};
+
+const int SPECIAL_CHARACTERS_SIZE = sizeof(SPECIAL_CHARACTERS) / sizeof(SPECIAL_CHARACTERS[0]);
+
+enum FieldDataType {
+    INT, TEXT
+};
+
+struct FieldData {
+    string name;
+    FieldDataType dataType;
+    int columnIndex;
+};
+
+// Table class definition
+// The actual database
+class Table {
+    private:
+        // Anything under private can only be accessed by the class itself
+        vector<FieldData> fieldDataList;
+        vector<vector<string>> dataStr;
+        vector<vector<int>> dataInt;
+    public:
+        // Anything under public can be accessed outside of the class
+        string name;
+
+        // This is a constructor
+        // This is what allows you to create a class
+        // It can also take parameters like functions do
+        Table(string s) {
+            name = s;
+
+            // We just need to create empty fields here
+            fieldDataList = vector<FieldData>();
+            dataStr = vector<vector<string>>();
+            dataInt = vector<vector<int>>();
+        }
+
+        // These are methods; functions that automatically have access to the class Table
+        void setName(string name) {
+            // You can also do:
+            // name = name;
+            // but that's confusing
+            //
+            // This line set the variable name of the created Table class
+            this->name = name;
+        }
+
+        void addColumns() {}
+        void selectRows() {}
+        void insertRows() {}
+        void deleteRows() {}
+        void updateRows() {}
+};
 
 // -- Function Prototype --
 // Technically, you don't need to put the parameter name here
 // But it's good for documentation
-void stringToTokens(string rawStatement, vector<Token> &tokenList);
-Token parseWord(string &rawStatement, int &char_pos);
-Token parseNumberLiteral(string &rawStatement, int &char_pos);
-Token parseStringLiteral(string &rawStatement, int &char_pos);
-Token parseSpecialCharacters(string &rawStatement, int &char_pos);
+void stringToTokens(string rawStatement, vector<string> &tokenList);
+string parseWord(string &rawStatement, int &char_pos);
+string parseNumberLiteral(string &rawStatement, int &char_pos);
+string parseStringLiteral(string &rawStatement, int &char_pos);
+string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
-string stringifyTokenType(TokenType tokenType);
-void printToken(Token token);
+void createTable(vector<string> tokens, Table& table);
+
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -108,15 +145,19 @@ int main (int argc, char *argv[]) {
         rawStatement += ';';
         cout << rawStatement << '\n';
 
-        vector<Token> statementTokens;
+        vector<string> statementTokens;
         stringToTokens(rawStatement, statementTokens);
 
         for (int i = 0; i < statementTokens.size(); i++) {
             // Temporary code to print out the tokens
-            cout << "\n";
-            cout << "Token #" << i+1 << "\n";
-            cout << "----------------------\n";
-            printToken(statementTokens[i]);
+            cout << "Token #" << i+1 << ": " << statementTokens[i] << "\n";
+        }
+        cout << '\n';
+
+        // Empty table to store value
+        Table table("");
+        if (statementTokens[1] == "TABLE") {
+            createTable(statementTokens, table);
         }
     }
 
@@ -126,10 +167,10 @@ int main (int argc, char *argv[]) {
 
 
 // -- The lexer --
-void stringToTokens(string rawStatement, vector<Token> &tokenList) {
+void stringToTokens(string rawStatement, vector<string> &tokenList) {
     int char_pos = 0;
     while (char_pos < rawStatement.length()) {
-        Token token = Token();
+        string token = "";
         char current_char = rawStatement[char_pos];
 
         // If the character is a letter or an underscore or a dot
@@ -166,52 +207,26 @@ void stringToTokens(string rawStatement, vector<Token> &tokenList) {
 
 // Note that we also carried the full statement and the current character position
 // This is to ensure that after parsing a word, we can advance to the next character after the word
-Token parseWord(string &rawStatement, int &char_pos) {
-    string word = "";
-    Token token = Token();
+string parseWord(string &rawStatement, int &char_pos) {
+    string token = "";
     char current_char = rawStatement[char_pos];
-    bool hasDot = false;
 
     // While the current character is still valid, keep adding to word
     // Otherwise break the loop
     // Valid characters here are letters, numbers, underscores, and dot
     // Note that numbers can be used here if it's not the first character
     while (isalnum(current_char) || current_char == '_' || current_char == '.') {
-        if (current_char == '.')
-            hasDot = true;
-
-        word += current_char;
+        token += current_char;
 
         char_pos++;
         current_char = rawStatement[char_pos];
     }
 
-    token.value = word;
-
-    // More guard clauses
-
-    // Check if it's a filename
-    if (hasDot) {
-        token.type = TokenType::Filename;
-        return token;
-    }
-
-    // Check if it's a keyword
-    for (int i = 0; i < KEYWORD_LIST_SIZE; i++) {
-        if (word == KEYWORD_LIST[i]) {
-            token.type = TokenType::Keyword;
-            return token;
-        }
-    }
-
-    // If nothing else, then it must be an identifier
-    token.type = TokenType::Identifier;
     return token;
 }
 
 
-Token parseNumberLiteral(string &rawStatement, int &char_pos) {
-    Token token = Token();
+string parseNumberLiteral(string &rawStatement, int &char_pos) {
     string value = "";
     char current_digit = rawStatement[char_pos];
 
@@ -223,21 +238,28 @@ Token parseNumberLiteral(string &rawStatement, int &char_pos) {
         current_digit = rawStatement[char_pos];
     }
 
-    token.type = TokenType::Literal;
-    token.value = value;
-
-    return token;
+    return value;
 }
 
 
-Token parseStringLiteral(string &rawStatement, int &char_pos) {
-    Token token = Token();
+string parseStringLiteral(string &rawStatement, int &char_pos) {
     string value = "";
-
-    // We only want the string values, not the quotation mark
-    // So we skip it
-    char_pos++;
     char current_char = rawStatement[char_pos];
+
+    // current_char right now is the quotation mark
+    // since it might be single or double quote, we will be storing it for later
+    char quotation_mark = current_char;
+
+    // we manually add this. see below for why
+    value += quotation_mark;
+
+    // Because the char_pos is currently pointing to the quotation mark,
+    // we have to point it to the next character
+    // or else the while loop will not run
+    // and it will go back to stringToToken() but still pointing to the quotation mark
+    // creating an endless loop
+    char_pos++;
+    current_char = rawStatement[char_pos];
 
     // We use '&&' operator so that either one can trigger to terminate the loop
     while (current_char != '\'' && current_char != '"') {
@@ -247,93 +269,102 @@ Token parseStringLiteral(string &rawStatement, int &char_pos) {
         current_char = rawStatement[char_pos];
     }
 
-    token.type = TokenType::Literal;
-    token.value = value;
-
-    // After parsing, char_pos will point to the character AFTER the string literal
-    // Which is the closing quotation mark
-    // We will ignore that too
+    // Again, skip the current quotation mark to avoid endless loop
     char_pos++;
 
-    return token;
+    // Since we skip the closing of quotation mark, we have to re-add it manually
+    // which is why we store it BEFORE parsing
+    value += quotation_mark;
+
+    return value;
 }
 
 
-Token parseSpecialCharacters(string &rawStatement, int &char_pos) {
+string parseSpecialCharacters(string &rawStatement, int &char_pos) {
     char current_char = rawStatement[char_pos];
-    Token token = Token();
 
-    // Since each character has, well, 1 character
-    // We don't need a loop
-    switch (current_char) {
-        case '(':
-            token.type = TokenType::OpenBracket;
-            break;
-        case ')':
-            token.type = TokenType::CloseBracket;
-            break;
-        case ';':
-            token.type = TokenType::Semicolon;
-            break;
-        case ',':
-            token.type = TokenType::Comma;
-            break;
-        case '*':
-            token.type = TokenType::Wildcard;
-            break;
-        default:
-            cout << "Unknown token. Exiting...\n";
+    // I HAVE TO PUT THIS CUZ THERE'S NO GUD WAY TO CONVERT CHAR TO STRING
+    // IT'S SOO GODDAMN UGLY
+    string s = "";
+
+    for (int i = 0; i < SPECIAL_CHARACTERS_SIZE; i++) {
+        if (current_char == SPECIAL_CHARACTERS[i]) {
+            // Point to the next character
+            char_pos++;
+            return s + current_char;
+        }
+    }
+
+    cout << "Unknown token. Exiting...\n";
+    exit(1);
+}
+
+
+// -- Processing functions --
+void createTable(vector<string> tokens, Table& table) {
+    // The switch statement in main should call this function
+    // only if the statement start with "CREATE TABLE"
+    // so we start at the 3rd token (index 2)
+    int index = 2;
+
+    // Main advantage of the former token system
+    // is that checking if the tokens are valid will be much easier
+    // For now we won't care too much on error handling
+    // focus on getting it to work
+    string tableName = tokens[index];
+    table.setName(tableName);
+
+    // Move to the next token but skip the opening bracket
+    index += 2;
+
+    // Parse the field name and its type
+    // Stop when close bracket is found
+    while (true) {
+        string fieldName = tokens[index];
+
+        index++;
+        string dataTypeStr = tokens[index];
+        FieldDataType fieldDataType;
+        if (dataTypeStr == "INT")
+            fieldDataType = FieldDataType::INT;
+        else if (dataTypeStr == "TEXT")
+            fieldDataType = FieldDataType::TEXT;
+        else {
+            cout << "Unknwon field data type \'" << dataTypeStr << "\'. Exiting...\n";
             exit(1);
+        }
+
+        FieldData fieldData;
+        fieldData.name = fieldName;
+        fieldData.dataType = fieldDataType;
+
+        cout << "Field name: " << fieldData.name << '\n';
+        cout << "Field data type: " << dataTypeStr << "\n\n";
+
+        // This is just a stub, so it won't do anything for now
+        // But this is how you access public class methods
+        table.addColumns();
+
+        // Skip the comma
+        index++;
+
+        // break if closing bracket is found
+        if (tokens[index] == ")")
+            break;
+
+        // If not, point to the next token, i.e, the next field name
+        index++;
     }
-
-    // Point to the next character
-    char_pos++;
-
-    token.value = current_char;
-    return token;
 }
 
+void printDatabases() {
 
-// There may be a way to do this concisely
-// But hey, it works
-string stringifyTokenType(TokenType tokenType) {
-    string str;
-    switch (tokenType) {
-        case TokenType::Keyword:
-            str = "Keyword";
-            break;
-        case TokenType::Identifier:
-            str = "Identifier";
-            break;
-        case TokenType::Filename:
-            str = "Filename";
-            break;
-        case TokenType::Literal:
-            str = "Literal";
-            break;
-        case TokenType::Semicolon:
-            str = "Semicolon";
-            break;
-        case TokenType::OpenBracket:
-            str = "OpenBracket";
-            break;
-        case TokenType::CloseBracket:
-            str = "CloseBracket";
-            break;
-        case TokenType::Comma:
-            str = "Comma";
-            break;
-        case TokenType::Wildcard:
-            str = "Wildcard";
-            break;
-    }
-
-    return str;
 }
 
+void insertIntoTable() {
 
-// helper to print tokens to terminal
-void printToken(Token token) {
-    cout << "Type: " << stringifyTokenType(token.type) << "\n";
-    cout << "Value: " << token.value << "\n";
+}
+
+void selectFromTable() {
+
 }
