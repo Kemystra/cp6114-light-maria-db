@@ -47,13 +47,13 @@ const char SPECIAL_CHARACTERS[] = {
 
 const int SPECIAL_CHARACTERS_SIZE = sizeof(SPECIAL_CHARACTERS) / sizeof(SPECIAL_CHARACTERS[0]);
 
-enum fieldDataType {
+enum FieldDataType {
     INT, TEXT
 };
 
-struct fieldData {
+struct FieldData {
     string name;
-    fieldDataType dataType;
+    FieldDataType dataType;
     int columnIndex;
 };
 
@@ -62,7 +62,7 @@ struct fieldData {
 class Table {
     private:
         // Anything under private can only be accessed by the class itself
-        vector<fieldData> fieldDataList;
+        vector<FieldData> fieldDataList;
         vector<vector<string>> dataStr;
         vector<vector<int>> dataInt;
     public:
@@ -76,13 +76,14 @@ class Table {
             name = s;
 
             // We just need to create empty fields here
-            fieldDataList = vector<fieldData>();
+            fieldDataList = vector<FieldData>();
             dataStr = vector<vector<string>>();
             dataInt = vector<vector<int>>();
         }
 
         // These are methods; functions that automatically have access to the class Table
         void selectRows() {}
+        void insertRows() {}
         void deleteRows() {}
         void updateRows() {}
 };
