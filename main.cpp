@@ -47,9 +47,14 @@ const char SPECIAL_CHARACTERS[] = {
 
 const int SPECIAL_CHARACTERS_SIZE = sizeof(SPECIAL_CHARACTERS) / sizeof(SPECIAL_CHARACTERS[0]);
 
-// Fill this one
-struct fieldData {
+enum fieldDataType {
+    INT, TEXT
+};
 
+struct fieldData {
+    string name;
+    fieldDataType dataType;
+    int columnIndex;
 };
 
 // Table class definition
