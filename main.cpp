@@ -265,6 +265,7 @@ string parseSpecialCharacters(string &rawStatement, int &char_pos) {
 
     for (int i = 0; i < SPECIAL_CHARACTERS_SIZE; i++) {
         if (current_char == SPECIAL_CHARACTERS[i]) {
+            // Point to the next character
             char_pos++;
             return s + current_char;
         }
