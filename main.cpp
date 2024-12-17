@@ -107,6 +107,8 @@ string parseNumberLiteral(string &rawStatement, int &char_pos);
 string parseStringLiteral(string &rawStatement, int &char_pos);
 string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
+void createTable(vector<string> tokens, Table& table);
+
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -293,8 +295,60 @@ string parseSpecialCharacters(string &rawStatement, int &char_pos) {
 
 
 // -- Processing functions --
-void createTable() {
+void createTable(vector<string> tokens, Table& table) {
+    // The switch statement in main should call this function
+    // only if the statement start with "CREATE TABLE"
+    // so we start at the 3rd token (index 2)
+    int index = 2;
 
+    // Main advantage of the former token system
+    // is that checking if the tokens are valid will be much easier
+    // For now we won't care too much on error handling
+    // focus on getting it to work
+    string tableName = tokens[index];
+    table.setName(tableName);
+
+    // Move to the next token but skip the opening bracket
+    index += 2;
+
+    // Parse the field name and its type
+    // Stop when close bracket is found
+    while (true) {
+        string fieldName = tokens[index];
+
+        index++;
+        string dataTypeStr = tokens[index];
+        FieldDataType fieldDataType;
+        if (dataTypeStr == "INT")
+            fieldDataType = FieldDataType::INT;
+        else if (dataTypeStr == "TEXT")
+            fieldDataType = FieldDataType::TEXT;
+        else {
+            cout << "Unknwon field data type \'" << dataTypeStr << "\'. Exiting...\n";
+            exit(1);
+        }
+
+        FieldData fieldData;
+        fieldData.name = fieldName;
+        fieldData.dataType = fieldDataType;
+
+        cout << "Field name: " << fieldData.name << '\n';
+        cout << "Field data type: " << dataTypeStr << "\n\n";
+
+        // This is just a stub, so it won't do anything for now
+        // But this is how you access public class methods
+        table.addColumns();
+
+        // Skip the comma
+        index++;
+
+        // break if closing bracket is found
+        if (tokens[index] == ")")
+            break;
+
+        // If not, point to the next token, i.e, the next field name
+        index++;
+    }
 }
 
 void printDatabases() {
