@@ -82,6 +82,16 @@ class Table {
         }
 
         // These are methods; functions that automatically have access to the class Table
+        void setName(string name) {
+            // You can also do:
+            // name = name;
+            // but that's confusing
+            //
+            // This line set the variable name of the created Table class
+            this->name = name;
+        }
+
+        void addColumns() {}
         void selectRows() {}
         void insertRows() {}
         void deleteRows() {}
