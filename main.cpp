@@ -91,7 +91,27 @@ class Table {
             this->name = name;
         }
 
-        void addColumns() {}
+        void addColumn(string fieldName, FieldDataType fieldDataType) {
+            FieldData field = FieldData();
+            field.name = fieldName;
+            field.dataType = fieldDataType;
+
+            // Add a new column, and put its index into field
+            // We will use the index later to get the correct column
+            switch (fieldDataType) {
+                case FieldDataType::INT:
+                    dataInt.push_back(vector<int>());
+                    field.columnIndex = dataInt.size() - 1;
+                    break;
+                case FieldDataType::TEXT:
+                    dataStr.push_back(vector<string>());
+                    field.columnIndex = dataStr.size() - 1;
+                    break;
+            }
+
+            fieldDataList.push_back(field);
+        }
+
         void selectRows() {}
         void insertRows() {}
         void deleteRows() {}
@@ -334,16 +354,7 @@ void createTable(vector<string> tokens, Table& table) {
             exit(1);
         }
 
-        FieldData fieldData;
-        fieldData.name = fieldName;
-        fieldData.dataType = fieldDataType;
-
-        cout << "Field name: " << fieldData.name << '\n';
-        cout << "Field data type: " << dataTypeStr << "\n\n";
-
-        // This is just a stub, so it won't do anything for now
-        // But this is how you access public class methods
-        table.addColumns();
+        table.addColumn(fieldName, fieldDataType);
 
         // Skip the comma
         index++;
