@@ -443,7 +443,7 @@ int main (int argc, char *argv[]) {
                 if (statementToken[i] == "INTO")
                     insertIntoTable();
             }
-            if else (statementToken[i] == "VALUES")
+            // if else (statementToken[i] == "VALUES")
             if else (statementToken[i] == "SELECT")
             {
                 if (statementToken[i] == "FROM")
@@ -452,7 +452,7 @@ int main (int argc, char *argv[]) {
             if else (statementToken[i] == "INT")
 
             if else (statementToken[i] == "TEXT")
-                
+
 
                 
                 
