@@ -91,7 +91,19 @@ class Table {
             this->name = name;
         }
 
-        void addColumn(string fieldName, FieldDataType fieldDataType) {
+        void addColumn(string fieldName, string fieldDataTypeStr) {
+            // This way of converting string to its enum type is kinda janky
+            // Tho this is the easiest way
+            FieldDataType fieldDataType;
+            if (fieldDataTypeStr == "INT")
+                fieldDataType = FieldDataType::INT;
+            else if (fieldDataTypeStr == "TEXT")
+                fieldDataType = FieldDataType::TEXT;
+            else {
+                cout << "Unknown field data type \'" << fieldDataTypeStr << "\'. Exiting...\n";
+                exit(1);
+            }
+
             FieldData field = FieldData();
             field.name = fieldName;
             field.dataType = fieldDataType;
@@ -100,16 +112,28 @@ class Table {
             // We will use the index later to get the correct column
             switch (fieldDataType) {
                 case FieldDataType::INT:
-                    dataInt.push_back(vector<int>());
+                    // dataInt.emplace_back() is the same as dataInt.push_back(vector<int>());
+                    // The nice thing is it automatically adds the correct type
+                    dataInt.emplace_back();
                     field.columnIndex = dataInt.size() - 1;
                     break;
                 case FieldDataType::TEXT:
-                    dataStr.push_back(vector<string>());
+                    dataStr.emplace_back();
                     field.columnIndex = dataStr.size() - 1;
                     break;
             }
 
             fieldDataList.push_back(field);
+
+            // Temporary code to output fieldDataList
+            /*for (int i = 0; i < fieldDataList.size(); i++) {*/
+            /*    cout << "Field #" << i+1 << '\n';*/
+            /*    FieldData field = fieldDataList[i];*/
+            /*    cout << "Name: " << field.name << '\n';*/
+            /*    cout << "Data Type: " << field.dataType << '\n';*/
+            /*    cout << "Column Index: " << field.columnIndex << '\n';*/
+            /*    cout << '\n';*/
+            /*}*/
         }
 
         void selectRows() {}
@@ -343,18 +367,9 @@ void createTable(vector<string> tokens, Table& table) {
         string fieldName = tokens[index];
 
         index++;
-        string dataTypeStr = tokens[index];
-        FieldDataType fieldDataType;
-        if (dataTypeStr == "INT")
-            fieldDataType = FieldDataType::INT;
-        else if (dataTypeStr == "TEXT")
-            fieldDataType = FieldDataType::TEXT;
-        else {
-            cout << "Unknwon field data type \'" << dataTypeStr << "\'. Exiting...\n";
-            exit(1);
-        }
+        string fieldDataTypeStr = tokens[index];
 
-        table.addColumn(fieldName, fieldDataType);
+        table.addColumn(fieldName, fieldDataTypeStr);
 
         // Skip the comma
         index++;
