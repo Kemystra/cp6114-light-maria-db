@@ -1,0 +1,28 @@
+CREATE fileOutput3.txt;
+DATABASES;
+
+CREATE TABLE friends(
+id INT,
+name TEXT,
+nickname TEXT,
+state TEXT,
+character TEXT,
+favouriteNumber INT,
+favouriteColor TEXT,
+hobby1 TEXT,
+hobby2 TEXT,
+dream TEXT
+);
+TABLES;
+
+INSERT INTO
+friends(id,name,nickname,state,character,favouriteNumber,favouriteColor,hobby1,hobby2,dream) VALUES (1,'Aimi Binti Mohd Faizal','Mimi','KL','cute',797,'Red','Studying','Drawing','White Hat Hacker');
+INSERT INTO
+friends(id,name,nickname,state,favouriteNumber,favouriteColor,hobby1,hobby2,dream) VALUES (2,'Akmal Bin Jalal','Jimin','Sabah',235,'Magenta','Living','Not Dying','Astronaut');
+INSERT INTO
+friends(id,name,nickname,state,favouriteNumber,favouriteColor,hobby1,hobby2,dream) VALUES (3,'Low Eng Sern','Steven','Johor',777,'Black','Reading','Jogging','Game Developer');
+INSERT INTO
+friends(id,name,nickname,state,favouriteNumber,favouriteColor,hobby1,hobby2,dream) VALUES (4,'Muhammad Afiq Bin Shahrin','Afiq','KL','666','Green','Football','Gaming','Be successful');
+
+SELECT * FROM friends;
+SELECT COUNT(*) FROM friends;
