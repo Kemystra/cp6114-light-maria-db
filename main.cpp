@@ -429,16 +429,29 @@ int main (int argc, char *argv[]) {
         stringToTokens(rawStatement, statementTokens);
 
         for (int i = 0; i < statementTokens.size(); i++) {
-            // Temporary code to print out the tokens
-            cout << "Token #" << i+1 << ": " << statementTokens[i] << "\n";
+            if (statementTokens[0] == "CREATE")
+            {
+                if (statementTokens[1] == "TABLE") 
+                    createTable(statementTokens, table);
+            }
+            if else (statementToken[i] == "TABLES")
+                cout << table.getTableName() << endl;
+            if else (statementToken[i] == "DATABASES")
+                printDatabases();
+            if else (statementToken[i] == "INSERT")
+                insertIntoTable();
+            // if else (statementToken[i] == "VALUES")
+            if else (statementToken[i] == "SELECT")
+                selectFromTable();
+                
         }
         cout << '\n';
 
         // Empty table to store value
-        Table table("");
-        if (statementTokens[1] == "TABLE") {
-            createTable(statementTokens, table);
-        }
+        // Table table("");
+        // if (statementTokens[1] == "TABLE") {
+        //     createTable(statementTokens, table);
+        // }
     }
 
 
