@@ -20,7 +20,12 @@
 
 using namespace std;
 
+// This is called a type alias
+// We can use Row as if we are using vector<string>
+// It's just to make part of the code more readable
+typedef vector<string> Row;
 
+// -- Constant Definitions --
 const string KEYWORDS[] = {
     "CREATE",
     "DATABASES",
@@ -47,6 +52,11 @@ const char SPECIAL_CHARACTERS[] = {
 
 const int SPECIAL_CHARACTERS_SIZE = sizeof(SPECIAL_CHARACTERS) / sizeof(SPECIAL_CHARACTERS[0]);
 
+// If you want to define empty values (i.e: NULL in SQL)
+// set it to this string
+// '\0' is escape sequence for the NULL character in the ASCII table (number 0)
+const string NULL_STR = "\0\0\0";
+
 enum FieldDataType {
     INT, TEXT
 };
@@ -63,8 +73,9 @@ class Table {
     private:
         // Anything under private can only be accessed by the class itself
         vector<FieldData> fieldDataList;
-        vector<vector<string>> dataStr;
-        vector<vector<int>> dataInt;
+        // We can access the data with one data type only
+        // and convert as needed.
+        vector<Row> rowList;
     public:
         // Anything under public can be accessed outside of the class
         string name;
@@ -77,8 +88,7 @@ class Table {
 
             // We just need to create empty fields here
             fieldDataList = vector<FieldData>();
-            dataStr = vector<vector<string>>();
-            dataInt = vector<vector<int>>();
+            rowList = vector<Row>();
         }
 
         // These are methods; functions that automatically have access to the class Table
