@@ -91,6 +91,10 @@ class Table {
             this->name = name;
         }
 
+        string getName() const {
+            return name;
+        }
+
         void addColumn(string fieldName, string fieldDataTypeStr) {
             // This way of converting string to its enum type is kinda janky
             // Tho this is the easiest way
@@ -388,6 +392,9 @@ string parseStringLiteral(string &rawStatement, int &char_pos);
 string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
 void createTable(vector<string> tokens, Table& table);
+void printDatabases();
+void insertIntoTable();
+void selectFromTable();
 
 
 int main (int argc, char *argv[]) {
@@ -420,6 +427,7 @@ int main (int argc, char *argv[]) {
     // One of the consequence of this code is that the newline character is not removed
     // We will handle it just like other whitespace, by ignoring it
     string rawStatement;
+    Table table("");
     while (getline(inputFile, rawStatement, ';')) {
         // We need the semicolon to mark end of statement, so I readded it
         rawStatement += ';';
@@ -434,14 +442,14 @@ int main (int argc, char *argv[]) {
                 if (statementTokens[1] == "TABLE") 
                     createTable(statementTokens, table);
             }
-            if else (statementToken[i] == "TABLES")
-                cout << table.getTableName() << endl;
-            if else (statementToken[i] == "DATABASES")
+            else if (statementTokens[i] == "TABLES")
+                cout << table.getName() << endl;
+            else if (statementTokens[i] == "DATABASES")
                 printDatabases();
-            if else (statementToken[i] == "INSERT")
+            else if (statementTokens[i] == "INSERT")
                 insertIntoTable();
             // if else (statementToken[i] == "VALUES")
-            if else (statementToken[i] == "SELECT")
+            else if (statementTokens[i] == "SELECT")
                 selectFromTable();
                 
         }
