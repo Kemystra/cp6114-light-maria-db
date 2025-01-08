@@ -439,22 +439,10 @@ int main (int argc, char *argv[]) {
             if else (statementToken[i] == "DATABASES")
                 printDatabases();
             if else (statementToken[i] == "INSERT")
-            {
-                if (statementToken[i] == "INTO")
-                    insertIntoTable();
-            }
+                insertIntoTable();
             // if else (statementToken[i] == "VALUES")
             if else (statementToken[i] == "SELECT")
-            {
-                if (statementToken[i] == "FROM")
-                    selectFromTable();
-            }
-            if else (statementToken[i] == "INT")
-
-            if else (statementToken[i] == "TEXT")
-
-
-                
+                selectFromTable();
                 
         }
         cout << '\n';
