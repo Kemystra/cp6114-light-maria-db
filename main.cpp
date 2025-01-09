@@ -123,20 +123,6 @@ class Table {
             field.dataType = fieldDataType;
 
             // Add a new column, and put its index into field
-            // We will use the index later to get the correct column
-            switch (fieldDataType) {
-                case FieldDataType::INT:
-                    // dataInt.emplace_back() is the same as dataInt.push_back(vector<int>());
-                    // The nice thing is it automatically adds the correct type
-                    dataInt.emplace_back();
-                    field.columnIndex = dataInt.size() - 1;
-                    break;
-                case FieldDataType::TEXT:
-                    dataStr.emplace_back();
-                    field.columnIndex = dataStr.size() - 1;
-                    break;
-            }
-
             fieldDataList.push_back(field);
 
             // Temporary code to output fieldDataList
