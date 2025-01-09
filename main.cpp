@@ -105,6 +105,18 @@ class Table {
             return name;
         }
 
+        FieldData getFieldData(string &fieldName) const {
+            // This is a short way of doing loops
+            for (FieldData fd : this->fieldDataList) {
+                if (fd.name == fieldName)
+                    return fd;
+            }
+
+            // TODO: replace this with more proper error handling
+            cout << "TableError: No field with the name " << fieldName;
+            exit(1);
+        }
+
         void addColumn(FieldData fd) {
             // Add a new column, and put its index into field
             fieldDataList.push_back(fd);
