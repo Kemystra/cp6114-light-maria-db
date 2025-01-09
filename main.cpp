@@ -105,25 +105,9 @@ class Table {
             return name;
         }
 
-        void addColumn(string fieldName, string fieldDataTypeStr) {
-            // This way of converting string to its enum type is kinda janky
-            // Tho this is the easiest way
-            FieldDataType fieldDataType;
-            if (fieldDataTypeStr == "INT")
-                fieldDataType = FieldDataType::INT;
-            else if (fieldDataTypeStr == "TEXT")
-                fieldDataType = FieldDataType::TEXT;
-            else {
-                cout << "Unknown field data type \'" << fieldDataTypeStr << "\'. Exiting...\n";
-                exit(1);
-            }
-
-            FieldData field = FieldData();
-            field.name = fieldName;
-            field.dataType = fieldDataType;
-
+        void addColumn(FieldData fd) {
             // Add a new column, and put its index into field
-            fieldDataList.push_back(field);
+            fieldDataList.push_back(fd);
 
             // Temporary code to output fieldDataList
             /*for (int i = 0; i < fieldDataList.size(); i++) {*/
@@ -622,7 +606,23 @@ void createTable(vector<string> tokens, Table& table) {
         index++;
         string fieldDataTypeStr = tokens[index];
 
-        table.addColumn(fieldName, fieldDataTypeStr);
+        // This way of converting string to its enum type is kinda janky
+        // Tho this is the easiest way
+        FieldDataType fieldDataType;
+        if (fieldDataTypeStr == "INT")
+            fieldDataType = FieldDataType::INT;
+        else if (fieldDataTypeStr == "TEXT")
+            fieldDataType = FieldDataType::TEXT;
+        else {
+            cout << "Unknown field data type \'" << fieldDataTypeStr << "\'. Exiting...\n";
+            exit(1);
+        }
+
+        FieldData field = FieldData();
+        field.name = fieldName;
+        field.dataType = fieldDataType;
+
+        table.addColumn(field);
 
         // Skip the comma
         index++;
