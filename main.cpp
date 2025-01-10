@@ -122,14 +122,14 @@ class Table {
             fieldDataList.push_back(fd);
 
             // Temporary code to output fieldDataList
-            /*for (int i = 0; i < fieldDataList.size(); i++) {*/
-            /*    cout << "Field #" << i+1 << '\n';*/
-            /*    FieldData field = fieldDataList[i];*/
-            /*    cout << "Name: " << field.name << '\n';*/
-            /*    cout << "Data Type: " << field.dataType << '\n';*/
-            /*    cout << "Column Index: " << field.columnIndex << '\n';*/
-            /*    cout << '\n';*/
-            /*}*/
+            // for (int i = 0; i < fieldDataList.size(); i++) {
+            // cout << "Field #" << i+1 << '\n';
+            // FieldData field = fieldDataList[i];
+            // cout << "Name: " << field.name << '\n';
+            // cout << "Data Type: " << field.dataType << '\n';
+            // cout << "Column Index: " << field.columnIndex << '\n';
+            // cout << '\n';
+            // }
         }
 
         void selectRows() {}
@@ -395,6 +395,8 @@ int main (int argc, char *argv[]) {
 
     inputFile.open(inputFileName);
 
+
+
     // These if statements are called 'guard clauses'
     // Instead of nesting code inside multiple 'if', we can detect errors and exit/return immediately
     // This is a very common programming pattern, and it helps to make code more readable
@@ -653,6 +655,7 @@ void printDatabases() {
 }
 
 void insertIntoTable() {
+
 
 }
 
