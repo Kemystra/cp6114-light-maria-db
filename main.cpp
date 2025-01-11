@@ -105,39 +105,21 @@ class Table {
             return name;
         }
 
-        void addColumn(string fieldName, string fieldDataTypeStr) {
-            // This way of converting string to its enum type is kinda janky
-            // Tho this is the easiest way
-            FieldDataType fieldDataType;
-            if (fieldDataTypeStr == "INT")
-                fieldDataType = FieldDataType::INT;
-            else if (fieldDataTypeStr == "TEXT")
-                fieldDataType = FieldDataType::TEXT;
-            else {
-                cout << "Unknown field data type \'" << fieldDataTypeStr << "\'. Exiting...\n";
-                exit(1);
+        FieldData getFieldData(string &fieldName) const {
+            // This is a short way of doing loops
+            for (FieldData fd : this->fieldDataList) {
+                if (fd.name == fieldName)
+                    return fd;
             }
 
-            FieldData field = FieldData();
-            field.name = fieldName;
-            field.dataType = fieldDataType;
+            // TODO: replace this with more proper error handling
+            cout << "TableError: No field with the name " << fieldName;
+            exit(1);
+        }
 
+        void addColumn(FieldData fd) {
             // Add a new column, and put its index into field
-            // We will use the index later to get the correct column
-            switch (fieldDataType) {
-                case FieldDataType::INT:
-                    // dataInt.emplace_back() is the same as dataInt.push_back(vector<int>());
-                    // The nice thing is it automatically adds the correct type
-                    dataInt.emplace_back();
-                    field.columnIndex = dataInt.size() - 1;
-                    break;
-                case FieldDataType::TEXT:
-                    dataStr.emplace_back();
-                    field.columnIndex = dataStr.size() - 1;
-                    break;
-            }
-
-            fieldDataList.push_back(field);
+            fieldDataList.push_back(fd);
 
             // Temporary code to output fieldDataList
             /*for (int i = 0; i < fieldDataList.size(); i++) {*/
@@ -636,7 +618,23 @@ void createTable(vector<string> tokens, Table& table) {
         index++;
         string fieldDataTypeStr = tokens[index];
 
-        table.addColumn(fieldName, fieldDataTypeStr);
+        // This way of converting string to its enum type is kinda janky
+        // Tho this is the easiest way
+        FieldDataType fieldDataType;
+        if (fieldDataTypeStr == "INT")
+            fieldDataType = FieldDataType::INT;
+        else if (fieldDataTypeStr == "TEXT")
+            fieldDataType = FieldDataType::TEXT;
+        else {
+            cout << "Unknown field data type \'" << fieldDataTypeStr << "\'. Exiting...\n";
+            exit(1);
+        }
+
+        FieldData field = FieldData();
+        field.name = fieldName;
+        field.dataType = fieldDataType;
+
+        table.addColumn(field);
 
         // Skip the comma
         index++;
