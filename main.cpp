@@ -133,7 +133,7 @@ class Table {
         }
 
         void selectRows() {}
-        void insertRows(const &Row row) {
+        void insertRows(Row row) {
             rowList.push_back(row);
         }
         void deleteRows() {}
@@ -388,7 +388,7 @@ string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
 void createTable(vector<string> tokens, Table& table);
 void printDatabases();
-void insertIntoTable();
+void insertIntoTable(vector<string> tokens, Table& table);
 void selectFromTable();
 
 
@@ -657,7 +657,7 @@ void printDatabases() {
 
 }
 
-void insertIntoTable() {
+void insertIntoTable(vector<string> tokens, Table& table) {
     int index = -1;
 
     for (int i = 0; i < token.size(); i++) {
@@ -679,7 +679,6 @@ void insertIntoTable() {
     for (int i = colStart; i <= colEnd; i++) {
         if()
     }
-
 
 
 }
