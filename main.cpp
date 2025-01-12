@@ -667,10 +667,10 @@ void insertIntoTable() {
         }
     }
 
-    if (index == -1) {
-        cout << "Error : No VALUES keywords found." << endl;
-        return;
-    }
+    // if (index == -1) {
+    //     cout << "Error : No VALUES keywords found." << endl;
+    //     return;
+    // }
 
     vector<string> columns;
     int colStart = 3; 
