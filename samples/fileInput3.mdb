@@ -1,28 +1,36 @@
 CREATE fileOutput3.txt;
 DATABASES;
 
-CREATE TABLE friends(
-id INT,
-name TEXT,
-nickname TEXT,
-state TEXT,
-character TEXT,
-favouriteNumber INT,
-favouriteColor TEXT,
-hobby1 TEXT,
-hobby2 TEXT,
-dream TEXT
+CREATE TABLE customer(
+customer_id INT,
+customer_name TEXT,
+customer_city TEXT,
+customer_state TEXT,
+customer_country TEXT,
+customer_phone TEXT,
+customer_email TEXT
 );
 TABLES;
 
 INSERT INTO
-friends(id,name,nickname,state,character,favouriteNumber,favouriteColor,hobby1,hobby2,dream) VALUES (1,'Aimi Binti Mohd Faizal','Mimi','KL','cute',797,'Red','Studying','Drawing','White Hat Hacker');
+customer(customer_id,customer_name,customer_city,customer_state,customer_country,customer_phone,customer_email) VALUES (1,'Aimi Binti Mohd Faizal','city1','KL','Msia','+60139071648','aimi.mohd.faizal@student.mmu.edu.my');
 INSERT INTO
-friends(id,name,nickname,state,favouriteNumber,favouriteColor,hobby1,hobby2,dream) VALUES (2,'Akmal Bin Jalal','Jimin','Sabah',235,'Magenta','Living','Not Dying','Astronaut');
+customer(customer_id,customer_name,customer_city,customer_state,customer_country,customer_email) VALUES (2,'Izzminhal Akmal Bin Norhisyam','city2','Sabah','Msia','+601140348650','izzminhal.akmal.norhisyam1@student.mmu.edu.my');
 INSERT INTO
-friends(id,name,nickname,state,favouriteNumber,favouriteColor,hobby1,hobby2,dream) VALUES (3,'Low Eng Sern','Steven','Johor',777,'Black','Reading','Jogging','Game Developer');
+customer(customer_id,customer_name,customer_city,customer_state,customer_country,customer_phone,customer_email) VALUES (3,'Low Eng Sern','city3','Johor','Msia','+601121500218','low.eng.sern@student.mmu.edu.my');
 INSERT INTO
-friends(id,name,nickname,state,favouriteNumber,favouriteColor,hobby1,hobby2,dream) VALUES (4,'Muhammad Afiq Bin Shahrin','Afiq','KL','666','Green','Football','Gaming','Be successful');
+customer(customer_id,customer_name,customer_city,customer_state,customer_country,customer_phone,customer_email) VALUES (4,'Muhammad Afiq Bin Shahrin','city4','KL','Msia','+60189770080','muhammad.afiq.shahrin@student.mmu.edu.my');
 
-SELECT * FROM friends;
-SELECT COUNT(*) FROM friends;
+SELECT * FROM customer;
+SELECT COUNT(*) FROM customer;
+
+
+UPDATE customer SET customer_state='Taman Sutera Utama' WHERE customer_id=3;
+INSERT INTO
+customer(customer_id,customer_name,customer_city,customer_state,customer_country,customer_phone,customer_email) VALUES (5,'Layra Bloom','city5','Penang','Msia','+60123456789','fake.layra.bloom@student.mmu.edu.my');
+SELECT * FROM customer;
+SELECT COUNT(*) FROM customer;
+SELECT customer_email FROM customer;
+
+DELETE FROM customer WHERE customer_id=5;
+SELECT * FROM customer;
