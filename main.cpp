@@ -658,7 +658,7 @@ void printDatabases() {
 }
 
 void insertIntoTable(vector<string> tokens, Table& table) {
-    int index = -1;
+    int index = 2;
 
     for (int i = 0; i < token.size(); i++) {
         if (token[i] == "VALUES"){
@@ -672,16 +672,29 @@ void insertIntoTable(vector<string> tokens, Table& table) {
     //     return;
     // }
 
-    vector<string> columns;
-    int colStart = 3; 
-    int colEnd = index - 1;
+    index += 2;
 
-    for (int i = colStart; i <= colEnd; i++) {
-        if()
+    vector<string> values;
+    // int valStart = index+1; 
+    int valEnd = tokens.size() - 1;
+
+    while (tokens[index] != ")") {
+
+        if (token[i] == ",") {
+            index++;
+            continue;
+        }
+
+        if ( tokens[i] != "'") {
+            values.push_back(tokens[i]);
+        }
+
     }
-
-
 }
+
+
+
+
 
 void selectFromTable() {
 
