@@ -458,9 +458,9 @@ int main (int argc, char *argv[]) {
                 selectFromTable();
             else if (statementTokens[i] == "UPDATE")
                 updateTable();
-            else if (statementToken[i] == "DELETE")
+            else if (statementTokens[i] == "DELETE")
                 deleteFromTable();
-            else if (statementToken[i] == "COUNT")
+            else if (statementTokens[i] == "COUNT")
                 countFromTable();
                 
         }
@@ -674,8 +674,8 @@ void printDatabases() {
 void insertIntoTable(vector<string> tokens, Table& table) {
     int index = 2;
 
-    for (int i = 0; i < token.size(); i++) {
-        if (token[i] == "VALUES"){
+    for (int i = 0; i < tokens.size(); i++) {
+        if (tokens[i] == "VALUES"){
             index = i;
             break;
         }
@@ -695,18 +695,18 @@ void insertIntoTable(vector<string> tokens, Table& table) {
 
     while (tokens[index] != ")") {
 
-        if (token[index] == "," || tokens[index] != "'") {
+        if (tokens[index] == "," || tokens[index] != "'") {
             index++;
             continue;
-
-        else
-            newRow.push_back(values[i]);
         }
 
+        else
+            newRow.push_back(values[index]);
+        
         index++;
     }
-    
-    table.insertRows(newRow)
+
+    table.insertRows(newRow);
 }
 
 
