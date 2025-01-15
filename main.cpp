@@ -37,7 +37,13 @@ const string KEYWORDS[] = {
     "SELECT",
     "FROM",
     "INT",
-    "TEXT"
+    "TEXT",
+    "UPDATE",
+    "SET",
+    "WHERE",
+    "DELETE",
+    "FROM",
+    "COUNT"
 };
 
 // Even though each string has a different sizes
@@ -390,7 +396,9 @@ void createTable(vector<string> tokens, Table& table);
 void printDatabases();
 void insertIntoTable(vector<string> tokens, Table& table);
 void selectFromTable();
-
+void updateTable();
+void deleteFromTable();
+void countFromTable();
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -445,9 +453,15 @@ int main (int argc, char *argv[]) {
                 printDatabases();
             else if (statementTokens[i] == "INSERT")
                 insertIntoTable(statementTokens, table);
-            // if else (statementToken[i] == "VALUES")
+            // else if (statementToken[i] == "VALUES")
             else if (statementTokens[i] == "SELECT")
                 selectFromTable();
+            else if (statementTokens[i] == "UPDATE")
+                updateTable();
+            else if (statementToken[i] == "DELETE")
+                deleteFromTable();
+            else if (statementToken[i] == "COUNT")
+                countFromTable();
                 
         }
         cout << '\n';
@@ -693,9 +707,18 @@ void insertIntoTable(vector<string> tokens, Table& table) {
 }
 
 
-
-
-
 void selectFromTable() {
+
+}
+
+void updateTable() {
+
+}
+
+void deleteFromTable() {
+
+}
+
+void countFromTable() {
 
 }
