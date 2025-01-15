@@ -145,242 +145,242 @@ class Table {
         void deleteRows() {}
         void updateRows() {}
 
-        // string printTable(string columnsName) {
-        //     string print = "";
-        //     //version 1 : csv format
-        //     if(columnsName == "*"){
-        //         // print the table header
-        //         for(int i=0; i<fieldDataList.size(); i++){
-        //             print += fieldDataList[i].name;
-        //             if(i != fieldDataList.size()-1){
-        //                 print += ',';
-        //             }
-        //         }
-        //         print += '\n';
-        //         //print the table data
-        //         int membersTotal = dataInt[0].size();
-        //         for(int i=0; i < membersTotal ; i++){
-        //             for(int j=0; j<fieldDataList.size(); j++){
-        //                 int columnIndex = fieldDataList[j].columnIndex;
-        //                 if(fieldDataList[j].dataType == FieldDataType::INT){
-        //                     if (dataInt[columnIndex][i] == -99){
-        //                         print += "NULL";
-        //                     } else
-        //                         print += to_string(dataInt[columnIndex][i]);
-        //                 } else {
-        //                     print += dataStr[columnIndex][i];
-        //                 }
-        //                 if(j != fieldDataList.size()-1){
-        //                     print += ',';
-        //                 }
-        //             }
-        //             if( i!= membersTotal-1)
-        //                 print += '\n';
-        //         }
-        //     } else {
-        //         FieldData fd;
-        //         fd.columnIndex = -1;
-        //         for(int i=0; i<fieldDataList.size();i++){
-        //             if(columnsName == fieldDataList[i].name){
-        //                 fd.columnIndex = fieldDataList[i].columnIndex;
-        //                 fd.dataType = fieldDataList[i].dataType;
-        //                 break;
-        //             }
-        //         }
-        //         print += columnsName + '\n';
-        //         if(fd.dataType == FieldDataType::INT){
-        //             for(int i=0; i<dataInt[fd.columnIndex].size();i++){
-        //                 if(dataInt[fd.columnIndex][i] != -99){
-        //                     print += to_string(dataInt[fd.columnIndex][i])+'\n';
-        //                 }
-        //             }
-        //             print.pop_back();
-        //         } else {
-        //             for(int i=0; i<dataStr[fd.columnIndex].size();i++){
-        //                 if(dataStr[fd.columnIndex][i] != "NULL"){
-        //                     print += dataStr[fd.columnIndex][i]+'\n';
-        //                 }
-        //             }
-        //             print.pop_back();
-        //         }
-        //     }
+        string printTable(string columnsName) {
+            string print = "";
+            //version 1 : csv format
+            if(columnsName == "*"){
+                // print the table header
+                for(int i=0; i<fieldDataList.size(); i++){
+                    print += fieldDataList[i].name;
+                    if(i != fieldDataList.size()-1){
+                        print += ',';
+                    }
+                }
+                print += '\n';
+                //print the table data
+                int membersTotal = dataInt[0].size();
+                for(int i=0; i < membersTotal ; i++){
+                    for(int j=0; j<fieldDataList.size(); j++){
+                        int columnIndex = fieldDataList[j].columnIndex;
+                        if(fieldDataList[j].dataType == FieldDataType::INT){
+                            if (dataInt[columnIndex][i] == -99){
+                                print += "NULL";
+                            } else
+                                print += to_string(dataInt[columnIndex][i]);
+                        } else {
+                            print += dataStr[columnIndex][i];
+                        }
+                        if(j != fieldDataList.size()-1){
+                            print += ',';
+                        }
+                    }
+                    if( i!= membersTotal-1)
+                        print += '\n';
+                }
+            } else {
+                FieldData fd;
+                fd.columnIndex = -1;
+                for(int i=0; i<fieldDataList.size();i++){
+                    if(columnsName == fieldDataList[i].name){
+                        fd.columnIndex = fieldDataList[i].columnIndex;
+                        fd.dataType = fieldDataList[i].dataType;
+                        break;
+                    }
+                }
+                print += columnsName + '\n';
+                if(fd.dataType == FieldDataType::INT){
+                    for(int i=0; i<dataInt[fd.columnIndex].size();i++){
+                        if(dataInt[fd.columnIndex][i] != -99){
+                            print += to_string(dataInt[fd.columnIndex][i])+'\n';
+                        }
+                    }
+                    print.pop_back();
+                } else {
+                    for(int i=0; i<dataStr[fd.columnIndex].size();i++){
+                        if(dataStr[fd.columnIndex][i] != "NULL"){
+                            print += dataStr[fd.columnIndex][i]+'\n';
+                        }
+                    }
+                    print.pop_back();
+                }
+            }
 
-        //     //version 2 : table format
+            //version 2 : table format
 
-        //     // calculate the highest count
-        //     vector<int> highestCount;
-        //     for(int i=0; i<fieldDataList.size();i++){
-        //         highestCount.push_back(fieldDataList[i].name.size());
-        //     }
-        //     for(int i=0; i<fieldDataList.size();i++){
-        //         int columnIndex = fieldDataList[i].columnIndex;
-        //         if(fieldDataList[i].dataType == FieldDataType::INT){
-        //             for(int j=0; j<dataInt[columnIndex].size(); j++){
-        //                 if(dataInt[columnIndex][j] != -99){
-        //                     int count = to_string(dataInt[columnIndex][j]).size();
-        //                     if(count > highestCount[i]){
-        //                         highestCount[i] = count;
-        //                     }
-        //                 }
-        //             }
-        //         } else {
-        //             for(int j=0; j<dataStr[columnIndex].size(); j++){
-        //                 if(dataStr[columnIndex][j] != "NULL"){
-        //                     int count = dataStr[columnIndex][j].size();
-        //                     if(count > highestCount[i]){
-        //                         highestCount[i] = count;
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        //     //print the table header
-        //     if(columnsName == "*"){
-        //         print += '\n';
-        //         for(int i=0;i<highestCount.size();i++){
-        //             print += '+';
-        //             for(int j=0;j<highestCount[i] +2;j++){
-        //                 print += '-';
-        //             }
-        //         }
-        //         print += "+\n";
-        //         for(int i=0;i<fieldDataList.size();i++){
-        //             print += "| " + fieldDataList[i].name;
-        //             for(int j=0;j<highestCount[i]-fieldDataList[i].name.size();j++){
-        //                 print += ' ';
-        //             }
-        //             print += " ";
-        //         }
-        //         print += "|\n";
-        //         for(int i=0;i<highestCount.size();i++){
-        //             print +='+';
-        //             for(int j=0;j<highestCount[i]+2;j++){
-        //                 print += '-';
-        //             }
-        //         }
-        //         print += "+\n";
+            // calculate the highest count
+            vector<int> highestCount;
+            for(int i=0; i<fieldDataList.size();i++){
+                highestCount.push_back(fieldDataList[i].name.size());
+            }
+            for(int i=0; i<fieldDataList.size();i++){
+                int columnIndex = fieldDataList[i].columnIndex;
+                if(fieldDataList[i].dataType == FieldDataType::INT){
+                    for(int j=0; j<dataInt[columnIndex].size(); j++){
+                        if(dataInt[columnIndex][j] != -99){
+                            int count = to_string(dataInt[columnIndex][j]).size();
+                            if(count > highestCount[i]){
+                                highestCount[i] = count;
+                            }
+                        }
+                    }
+                } else {
+                    for(int j=0; j<dataStr[columnIndex].size(); j++){
+                        if(dataStr[columnIndex][j] != "NULL"){
+                            int count = dataStr[columnIndex][j].size();
+                            if(count > highestCount[i]){
+                                highestCount[i] = count;
+                            }
+                        }
+                    }
+                }
+            }
+            //print the table header
+            if(columnsName == "*"){
+                print += '\n';
+                for(int i=0;i<highestCount.size();i++){
+                    print += '+';
+                    for(int j=0;j<highestCount[i] +2;j++){
+                        print += '-';
+                    }
+                }
+                print += "+\n";
+                for(int i=0;i<fieldDataList.size();i++){
+                    print += "| " + fieldDataList[i].name;
+                    for(int j=0;j<highestCount[i]-fieldDataList[i].name.size();j++){
+                        print += ' ';
+                    }
+                    print += " ";
+                }
+                print += "|\n";
+                for(int i=0;i<highestCount.size();i++){
+                    print +='+';
+                    for(int j=0;j<highestCount[i]+2;j++){
+                        print += '-';
+                    }
+                }
+                print += "+\n";
 
 
-        //         //print table data
-        //         int membersTotal = dataInt[0].size();
-        //         for(int i=0; i < membersTotal ; i++){
-        //             for(int j=0; j<fieldDataList.size(); j++){
-        //                 int columnIndex = fieldDataList[j].columnIndex;
-        //                 if(fieldDataList[j].dataType == FieldDataType::INT){
-        //                     if (dataInt[columnIndex][i] == -99){
-        //                         print+= "| NULL";
-        //                         for(int k=0;k<highestCount[j]-4;k++){
-        //                             print += ' ';
-        //                         }
-        //                     } else
-        //                         print += "| ";
-        //                         for(int k=0;k<highestCount[j]-to_string(dataInt[columnIndex][i]).size();k++){
-        //                             print += ' ';
-        //                         }
-        //                         print += to_string(dataInt[columnIndex][i]) ;
-        //                 } else {
-        //                     print += "| " + dataStr[columnIndex][i];
-        //                     for(int k=0;k<highestCount[j]-dataStr[columnIndex][i].size();k++){
-        //                         print += ' ';
-        //                     }
-        //                 }
-        //                 print += " ";
-        //             }
-        //             print+= "|\n";
-        //         }
-        //         for(int i=0;i<highestCount.size();i++){
-        //             print += '+';
-        //             for(int j=0;j<highestCount[i]+2;j++){
-        //                 print += '-';
-        //             }
-        //         }
-        //         print += "+";
-        //     } else {
-        //         int highestCountIndex = -1;
-        //         int columnIndex = -1;
-        //         for(int i = 0; i<fieldDataList.size();i++){
-        //             if(columnsName == fieldDataList[i].name){
-        //                 highestCountIndex = i;
-        //                 columnIndex = fieldDataList[i].columnIndex;
-        //                 break;
-        //             }
-        //         }
-        //         print += '\n';
-        //         // print header
-        //         print += '+';
-        //         for(int i=0; i<highestCount[highestCountIndex]+2 ;i++){
-        //             print += '-';
-        //         }
-        //         print += "+\n";
-        //         print += "| " + columnsName;
-        //         for(int i=0;i<highestCount[highestCountIndex] - columnsName.size();i++){
-        //             print += ' ';
-        //         }
-        //         print += " |\n";
-        //         print += '+';
-        //         for(int i=0; i<highestCount[highestCountIndex]+2 ;i++){
-        //             print += '-';
-        //         }
-        //         print += "+\n";
-        //         // print data
-        //         if(fieldDataList[highestCountIndex].dataType == FieldDataType::INT){
-        //             for(int i=0; i<dataInt[columnIndex].size();i++){
-        //                 if(dataInt[columnIndex][i] != -99){
-        //                     print += "| ";
-        //                     for(int j=0; j<highestCount[highestCountIndex]-to_string(dataInt[columnIndex][i]).size();j++){
-        //                         print += ' ';
-        //                     }
-        //                     print += to_string(dataInt[columnIndex][i]) + " |\n";
-        //                 }
-        //             }
-        //         } else {
-        //             for(int i=0; i<dataStr[columnIndex].size();i++){
-        //                 if(dataStr[columnIndex][i] != "NULL"){
-        //                     print += "| " + dataStr[columnIndex][i];
-        //                     for(int j=0; j<highestCount[highestCountIndex]-dataStr[columnIndex][i].size();j++){
-        //                         print += ' ';
-        //                     }
-        //                     print += " |\n";
-        //                 }
-        //             }
-        //         }
-        //         print += '+';
-        //         for(int i=0; i<highestCount[highestCountIndex]+2 ;i++){
-        //             print += '-';
-        //         }
-        //         print += "+";
-        //     }
+                //print table data
+                int membersTotal = dataInt[0].size();
+                for(int i=0; i < membersTotal ; i++){
+                    for(int j=0; j<fieldDataList.size(); j++){
+                        int columnIndex = fieldDataList[j].columnIndex;
+                        if(fieldDataList[j].dataType == FieldDataType::INT){
+                            if (dataInt[columnIndex][i] == -99){
+                                print+= "| NULL";
+                                for(int k=0;k<highestCount[j]-4;k++){
+                                    print += ' ';
+                                }
+                            } else
+                                print += "| ";
+                                for(int k=0;k<highestCount[j]-to_string(dataInt[columnIndex][i]).size();k++){
+                                    print += ' ';
+                                }
+                                print += to_string(dataInt[columnIndex][i]) ;
+                        } else {
+                            print += "| " + dataStr[columnIndex][i];
+                            for(int k=0;k<highestCount[j]-dataStr[columnIndex][i].size();k++){
+                                print += ' ';
+                            }
+                        }
+                        print += " ";
+                    }
+                    print+= "|\n";
+                }
+                for(int i=0;i<highestCount.size();i++){
+                    print += '+';
+                    for(int j=0;j<highestCount[i]+2;j++){
+                        print += '-';
+                    }
+                }
+                print += "+";
+            } else {
+                int highestCountIndex = -1;
+                int columnIndex = -1;
+                for(int i = 0; i<fieldDataList.size();i++){
+                    if(columnsName == fieldDataList[i].name){
+                        highestCountIndex = i;
+                        columnIndex = fieldDataList[i].columnIndex;
+                        break;
+                    }
+                }
+                print += '\n';
+                // print header
+                print += '+';
+                for(int i=0; i<highestCount[highestCountIndex]+2 ;i++){
+                    print += '-';
+                }
+                print += "+\n";
+                print += "| " + columnsName;
+                for(int i=0;i<highestCount[highestCountIndex] - columnsName.size();i++){
+                    print += ' ';
+                }
+                print += " |\n";
+                print += '+';
+                for(int i=0; i<highestCount[highestCountIndex]+2 ;i++){
+                    print += '-';
+                }
+                print += "+\n";
+                // print data
+                if(fieldDataList[highestCountIndex].dataType == FieldDataType::INT){
+                    for(int i=0; i<dataInt[columnIndex].size();i++){
+                        if(dataInt[columnIndex][i] != -99){
+                            print += "| ";
+                            for(int j=0; j<highestCount[highestCountIndex]-to_string(dataInt[columnIndex][i]).size();j++){
+                                print += ' ';
+                            }
+                            print += to_string(dataInt[columnIndex][i]) + " |\n";
+                        }
+                    }
+                } else {
+                    for(int i=0; i<dataStr[columnIndex].size();i++){
+                        if(dataStr[columnIndex][i] != "NULL"){
+                            print += "| " + dataStr[columnIndex][i];
+                            for(int j=0; j<highestCount[highestCountIndex]-dataStr[columnIndex][i].size();j++){
+                                print += ' ';
+                            }
+                            print += " |\n";
+                        }
+                    }
+                }
+                print += '+';
+                for(int i=0; i<highestCount[highestCountIndex]+2 ;i++){
+                    print += '-';
+                }
+                print += "+";
+            }
 
-        //     return print;
-        // }
+            return print;
+        }
 
-        // int count(string columnsName){
-        //     int count = 0;
-        //     if(columnsName == "*"){
-        //         count = dataInt[0].size();
-        //     } else {
-        //         for(int i=0; i<fieldDataList.size(); i++){
-        //             if(columnsName == fieldDataList[i].name){
-        //                 int columnIndex = fieldDataList[i].columnIndex;
-        //                 if(fieldDataList[i].dataType == FieldDataType::INT){
-        //                     for(int j=0; j<dataInt[columnIndex].size(); j++){
-        //                         if(dataInt[columnIndex][j] != -99){
-        //                             count++;
-        //                         }
-        //                     }
-        //                 } else {
-        //                     for(int j=0; j<dataStr[columnIndex].size(); j++){
-        //                         if(dataStr[columnIndex][j] != "NULL"){
-        //                             count++;
-        //                         }
-        //                     }
-        //                 }
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     return count;
-        // }
+        int count(string columnsName){
+            int count = 0;
+            if(columnsName == "*"){
+                count = dataInt[0].size();
+            } else {
+                for(int i=0; i<fieldDataList.size(); i++){
+                    if(columnsName == fieldDataList[i].name){
+                        int columnIndex = fieldDataList[i].columnIndex;
+                        if(fieldDataList[i].dataType == FieldDataType::INT){
+                            for(int j=0; j<dataInt[columnIndex].size(); j++){
+                                if(dataInt[columnIndex][j] != -99){
+                                    count++;
+                                }
+                            }
+                        } else {
+                            for(int j=0; j<dataStr[columnIndex].size(); j++){
+                                if(dataStr[columnIndex][j] != "NULL"){
+                                    count++;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            return count;
+        }
 };
 
 // -- Function Prototype --
