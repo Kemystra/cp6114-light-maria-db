@@ -681,6 +681,8 @@ void insertIntoTable(vector<string> tokens, Table& table) {
         }
     }
 
+    Row newRow;
+
     // if (index == -1) {
     //     cout << "Error : No VALUES keywords found." << endl;
     //     return;
@@ -703,7 +705,8 @@ void insertIntoTable(vector<string> tokens, Table& table) {
 
         index++;
     }
-    table.insertRows()
+    
+    table.insertRows(newRow)
 }
 
 
