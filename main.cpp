@@ -689,21 +689,21 @@ void insertIntoTable(vector<string> tokens, Table& table) {
     index += 2;
 
     vector<string> values;
-    // int valStart = index+1; 
     int valEnd = tokens.size() - 1;
 
     while (tokens[index] != ")") {
 
-        if (token[i] == ",") {
+        if (token[index] == "," || tokens[index] != "'") {
             index++;
             continue;
+
+        else
+            newRow.push_back(values[i]);
         }
 
-        if ( tokens[i] != "'") {
-            values.push_back(tokens[i]);
-        }
-
+        index++;
     }
+    table.insertRows()
 }
 
 
