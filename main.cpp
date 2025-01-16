@@ -228,17 +228,15 @@ class Table {
             //     return 1; 
             // }
 
-            for (int row : indexList)
-                rowList[indexList][colIndex] = newValue; 
-            
-        }
-
+            for (int i : indexList) {
+                rowList[i][colIndex] = newValue;
+            }
         }
 
         void deleteRows(ValueComparator comp) {
             vector<int> row_indices = findRow(comp);
             for (int i : row_indices) {
-                this->rowList.erase(i);
+                this->rowList.erase(rowList.begin() + i);
             }
         }
 };
@@ -253,14 +251,17 @@ string parseStringLiteral(string &rawStatement, int &char_pos);
 string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
 string trim(const string &s);
-void extractStr(string);
+string extractStr(string);
 
 void createTable(vector<string> tokens, Table& table);
 void printDatabases();
 void insertIntoTable(vector<string> tokens, Table& table);
 void updateTable(vector<string> tokens, Table& table);
 string selectFromTable(vector<string> tokens, Table& table);
-void deleteFromTable();
+void updateTable();
+void deleteFromTable(const vector<string>& tokens, Table& table);
+
+string formatCSV(vector<string> header, vector<vector<string>> tableData);
 
 ValueComparator whereKeywordParser(const vector<string>& tokens, int& index);
 
@@ -322,9 +323,7 @@ int main (int argc, char *argv[]) {
         else if (statementTokens[0] == "UPDATE")
             updateTable();
         else if (statementTokens[0] == "DELETE")
-            deleteFromTable();
-        else if (statementTokens[0] == "COUNT")
-            countFromTable();
+            deleteFromTable(statementTokens, table);
 
         cout << '\n';
 
@@ -491,7 +490,7 @@ string parseSpecialCharacters(string &rawStatement, int &char_pos) {
     exit(1);
 }
 
-void extractStr(string token) {
+string extractStr(string token) {
 
     if (token[0] == '\'') {
         return (token.substr(1, token.size()-2));
@@ -582,14 +581,14 @@ void insertIntoTable(vector<string> tokens, Table& table) {
     vector<string> values;
 
     while (tokens[index] != ")") {
-        currToken = tokens[index];
+        string currToken = tokens[index];
 
         if (currToken == ",") {
             index++;
             continue;
         }
 
-        newRow.push_back(extractStr(curr_token));
+        newRow.push_back(extractStr(currToken));
         
         index++;
     }
