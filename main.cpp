@@ -444,6 +444,7 @@ string parseStringLiteral(string &rawStatement, int &char_pos);
 string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
 string trim(const string &s);
+void extractStr(string);
 
 void createTable(vector<string> tokens, Table& table);
 void printDatabases();
@@ -682,6 +683,15 @@ string parseSpecialCharacters(string &rawStatement, int &char_pos) {
     exit(1);
 }
 
+void extractStr(string token) {
+
+    if (token[0] == '\'') {
+        return (token.substr(1, token.size()-2));
+    }
+
+    else
+        return token;
+}
 
 // -- Processing functions --
 void createTable(vector<string> tokens, Table& table) {
@@ -762,17 +772,16 @@ void insertIntoTable(vector<string> tokens, Table& table) {
     index += 2;
 
     vector<string> values;
-    int valEnd = tokens.size() - 1;
 
     while (tokens[index] != ")") {
+        currToken = tokens[index];
 
-        if (tokens[index] == "," || tokens[index] != "'") {
+        if (currToken == ",") {
             index++;
             continue;
         }
 
-        else
-            newRow.push_back(values[index]);
+        newRow.push_back(extractStr(curr_token));
         
         index++;
     }
@@ -786,6 +795,7 @@ void selectFromTable() {
 }
 
 void updateTable() {
+
 
 }
 
