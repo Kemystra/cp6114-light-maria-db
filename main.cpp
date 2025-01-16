@@ -26,6 +26,9 @@ using namespace std;
 // It's just to make part of the code more readable
 typedef vector<string> Row;
 
+// -- Configurations --
+const string INPUT_FILENAME = "fileInput1.mdb";
+
 // -- Constant Definitions --
 const string ACTION_KEYWORDS[] = {
     "CREATE",
@@ -255,10 +258,9 @@ string formatCSV(vector<string> header, vector<vector<string>> tableData);
 ValueComparator whereKeywordParser(const vector<string>& tokens, int& index);
 
 int main (int argc, char *argv[]) {
-    string inputFileName = "fileInput1.mdb";
     ifstream inputFile;
 
-    inputFile.open(inputFileName);
+    inputFile.open(INPUT_FILENAME);
 
     // These if statements are called 'guard clauses'
     // Instead of nesting code inside multiple 'if', we can detect errors and exit/return immediately
@@ -267,7 +269,7 @@ int main (int argc, char *argv[]) {
     if (!inputFile) {
         // We usually use cout, but for errors it's better to use cerr
         // I'll talk about why later, for now I will use cout
-        cout << "Unable to open input file " << inputFileName << '\n';
+        cout << "Unable to open input file " << INPUT_FILENAME << '\n';
 
         // Indicate exit with failure
         exit(1);
@@ -276,7 +278,7 @@ int main (int argc, char *argv[]) {
     // Check if file is empty
     // Note that EOF is short for End Of File
     if (inputFile.peek() == ifstream::traits_type::eof()) {
-        cout << "File " << inputFileName << " is empty\n";
+        cout << "File " << INPUT_FILENAME << " is empty\n";
         exit(1);
     }
 
