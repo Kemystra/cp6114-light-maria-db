@@ -17,6 +17,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -53,10 +54,13 @@ const int KEYWORDS_SIZE = sizeof(KEYWORDS) / sizeof(KEYWORDS[0]);
 
 // Open and close parentheses, wildcard, comma, and semicolon
 const char SPECIAL_CHARACTERS[] = {
-    '(', ')', '*', ',', ';'
+    '(', ')', '*', ',', ';','='
 };
 
 const int SPECIAL_CHARACTERS_SIZE = sizeof(SPECIAL_CHARACTERS) / sizeof(SPECIAL_CHARACTERS[0]);
+
+// Used in string trimming later
+const std::string WHITESPACE = " \n\r\t\f\v";
 
 // If you want to define empty values (i.e: NULL in SQL)
 // set it to this string
@@ -71,6 +75,23 @@ struct FieldData {
     string name;
     FieldDataType dataType;
     int columnIndex;
+};
+
+enum LogicalOperator {
+    Equal
+};
+
+// This is std::map
+// Literally, it "maps" from one value to another
+// Here, we map a string (the "=" symbol) to the LogicalOperator::Equal
+const map<string, LogicalOperator> strToLogicalOps = {
+    { "=", LogicalOperator::Equal }
+};
+
+struct ValueComparator {
+    string valueStr;
+    LogicalOperator op;
+    string columnName;
 };
 
 // Table class definition
@@ -123,6 +144,16 @@ class Table {
             exit(1);
         }
 
+        int getFieldIndex(const string& fieldName) const {
+            for (int i = 0; i < fieldDataList.size(); i++) {
+                if(fieldDataList[i].name == fieldName)
+                    return i;
+            }
+
+            // Indicate failure
+            return -1;
+        }
+
         void addColumn(FieldData fd) {
             // Add a new column, and put its index into field
             fieldDataList.push_back(fd);
@@ -142,8 +173,6 @@ class Table {
         void insertRows(Row row) {
             rowList.push_back(row);
         }
-        void deleteRows() {}
-        void updateRows() {}
 
         string printTable(string columnsName) {
             string print = "";
@@ -381,6 +410,28 @@ class Table {
             }
             return count;
         }
+
+        vector<Row> findRow(ValueComparator comp) const {
+            vector<Row> result;
+            for (const Row& row : this->rowList) {
+                int columnIndex = getFieldIndex(comp.columnName);
+                bool isMatch = false;
+
+                switch (comp.op) {
+                    case LogicalOperator::Equal:
+                        isMatch = row[columnIndex] == comp.valueStr;
+                }
+
+                if (isMatch)
+                    result.push_back(row);
+            }
+
+            return result;
+        }
+
+        void updateRows(const string& columnName, const string& newValue, ValueComparator comp) {
+            vector<Row> rows = findRow(comp);
+        }
 };
 
 // -- Function Prototype --
@@ -392,6 +443,7 @@ string parseNumberLiteral(string &rawStatement, int &char_pos);
 string parseStringLiteral(string &rawStatement, int &char_pos);
 string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
+string trim(const string &s);
 void extractStr(string);
 
 void createTable(vector<string> tokens, Table& table);
@@ -479,6 +531,24 @@ int main (int argc, char *argv[]) {
     return 0;
 }
 
+// Trimming functions
+string ltrim(const string &s)
+{
+    // Literally, find the position of the first character that is not in WHITESPACE
+    size_t start = s.find_first_not_of(WHITESPACE);
+    return (start == string::npos) ? "" : s.substr(start);
+}
+ 
+string rtrim(const string &s)
+{
+    // Kinda like above but searching from behind
+    size_t end = s.find_last_not_of(WHITESPACE);
+    return (end == string::npos) ? "" : s.substr(0, end + 1);
+}
+ 
+string trim(const string &s) {
+    return rtrim(ltrim(s));
+}
 
 // -- The lexer --
 void stringToTokens(string rawStatement, vector<string> &tokenList) {
@@ -735,4 +805,28 @@ void deleteFromTable() {
 
 void countFromTable() {
 
+}
+
+ValueComparator whereKeywordParser(const vector<string>& tokens, int& index) {
+    // Sanity check
+    if (tokens[index] != "WHERE")
+        exit(1);
+
+    ValueComparator comp;
+
+    index++;
+    comp.columnName = tokens[index];
+
+    index++;
+    comp.op = strToLogicalOps.at(tokens[index]);
+
+    // Get the value, and remove the single quotation if it's a string literal
+    index++;
+    string value = tokens[index];
+    if (value[0] == '\'')
+        comp.valueStr = value.substr(1, value.size() - 2);
+    else
+        comp.valueStr = value;
+
+    return comp;
 }
