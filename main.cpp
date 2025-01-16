@@ -641,10 +641,6 @@ void deleteFromTable(const vector<string>& tokens, Table& table) {
     table.deleteRows(comp);
 }
 
-void countFromTable() {
-
-}
-
 ValueComparator whereKeywordParser(const vector<string>& tokens, int& index) {
     // Sanity check
     if (tokens[index] != "WHERE")
@@ -658,14 +654,8 @@ ValueComparator whereKeywordParser(const vector<string>& tokens, int& index) {
     index++;
     comp.op = strToLogicalOps.at(tokens[index]);
 
-    // Get the value, and remove the single quotation if it's a string literal
     index++;
-    string value = tokens[index];
-    if (value[0] == '\'')
-        comp.valueStr = value.substr(1, value.size() - 2);
-    else
-        comp.valueStr = value;
-
+    comp.valueStr = extractStr(tokens[index]);
     return comp;
 }
 
