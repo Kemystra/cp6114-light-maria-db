@@ -392,7 +392,7 @@ string parseNumberLiteral(string &rawStatement, int &char_pos);
 string parseStringLiteral(string &rawStatement, int &char_pos);
 string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
-void extractStr();
+void extractStr(string);
 
 void createTable(vector<string> tokens, Table& table);
 void printDatabases();
@@ -725,6 +725,7 @@ void selectFromTable() {
 }
 
 void updateTable() {
+
 
 }
 
