@@ -703,7 +703,17 @@ void insertIntoTable(vector<string> tokens, Table& table) {
 
     vector<string> values;
 
+    while (tokens[index] != ")") {
+        currToken = tokens[index];
 
+        if (currToken == ",") {
+            index++;
+            continue;
+        }
+
+        newRow.push_back(extractStr(curr_token));
+        
+        index++;
     }
 
     table.insertRows(newRow);
