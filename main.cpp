@@ -441,7 +441,7 @@ class Table {
         }
 
         void updateRows(const string& columnName, const string& newValue, ValueComparator comp) {
-            vector<Row> rowList = findRow(comp); // find row that match condition
+            vector<int> indexList = findRow(comp); // find row that match condition
 
             int colIndex = getFieldIndex(columnName);
 
@@ -450,8 +450,9 @@ class Table {
             //     return 1; 
             // }
 
-            for (Row& row : rowList)
-                rows[colIndex] = newValue; 
+
+            for (int row : indexList)
+                rowList[indexList][colIndex] = newValue; 
             
         }
 
