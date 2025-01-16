@@ -293,10 +293,11 @@ int main (int argc, char *argv[]) {
 
         // We need the semicolon to mark end of statement, so I readded it
         rawStatement += ';';
-        cout << rawStatement << '\n';
 
         vector<string> statementTokens;
         stringToTokens(rawStatement, statementTokens);
+
+        string result = "";
 
         if (statementTokens[0] == "CREATE")
         {
@@ -304,18 +305,24 @@ int main (int argc, char *argv[]) {
                 createTable(statementTokens, table);
         }
         else if (statementTokens[0] == "TABLES")
-            cout << table.getName() << endl;
+            result = table.getName();
         else if (statementTokens[0] == "DATABASES")
             printDatabases();
         else if (statementTokens[0] == "INSERT")
             insertIntoTable(statementTokens, table);
         // else if (statementToken[i] == "VALUES")
         else if (statementTokens[0] == "SELECT")
-            selectFromTable(statementTokens, table);
+            result = selectFromTable(statementTokens, table);
         else if (statementTokens[0] == "UPDATE")
             updateTable(statementTokens, table);
         else if (statementTokens[0] == "DELETE")
             deleteFromTable(statementTokens, table);
+
+        // Log to terminal and output file (later)
+        cout << ">" << rawStatement << '\n';
+        if (result != "") {
+            cout << result << '\n';
+        }
 
         cout << '\n';
     }
