@@ -577,9 +577,10 @@ string selectFromTable(vector<string> tokens, Table& table) {
 
     bool countOrNot = false;
     string column;
-    
-    //check for last token if it is the name of table
-    if(tokens[tokens.size()-1] != table.getName()){
+
+    //check for 2nd last token if it is the name of table
+    // Note that the last token is always the semicolon
+    if(tokens[tokens.size()-2] != table.getName()){
         cout << "TableError: Table not found." << endl;
         exit(1);
     }
