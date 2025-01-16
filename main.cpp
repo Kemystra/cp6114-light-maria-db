@@ -441,7 +441,20 @@ class Table {
         }
 
         void updateRows(const string& columnName, const string& newValue, ValueComparator comp) {
-            vector<Row> rows = findRow(comp);
+            vector<int> indexList = findRow(comp); // find row that match condition
+
+            int colIndex = getFieldIndex(columnName);
+
+            // if (colIndex == -1) {
+            //     cout << "Error: Column " << columnName << " not found." << endl; 
+            //     return 1; 
+            // }
+
+            for (int row : indexList)
+                rowList[indexList][colIndex] = newValue; 
+            
+        }
+
         }
 
         void deleteRows(ValueComparator comp) {
@@ -811,10 +824,6 @@ void selectFromTable() {
 
 }
 
-void updateTable() {
-
-
-}
 
 void deleteFromTable() {
 
