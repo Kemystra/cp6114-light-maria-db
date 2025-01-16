@@ -54,7 +54,7 @@ const int KEYWORDS_SIZE = sizeof(KEYWORDS) / sizeof(KEYWORDS[0]);
 
 // Open and close parentheses, wildcard, comma, and semicolon
 const char SPECIAL_CHARACTERS[] = {
-    '(', ')', '*', ',', ';'
+    '(', ')', '*', ',', ';','='
 };
 
 const int SPECIAL_CHARACTERS_SIZE = sizeof(SPECIAL_CHARACTERS) / sizeof(SPECIAL_CHARACTERS[0]);
@@ -144,6 +144,16 @@ class Table {
             exit(1);
         }
 
+        int getFieldIndex(const string& fieldName) const {
+            for (int i = 0; i < fieldDataList.size(); i++) {
+                if(fieldDataList[i].name == fieldName)
+                    return i;
+            }
+
+            // Indicate failure
+            return -1;
+        }
+
         void addColumn(FieldData fd) {
             // Add a new column, and put its index into field
             fieldDataList.push_back(fd);
@@ -163,8 +173,6 @@ class Table {
         void insertRows(Row row) {
             rowList.push_back(row);
         }
-        void deleteRows() {}
-        void updateRows() {}
 
         string printTable(string columnsName) {
             string print = "";
@@ -401,6 +409,28 @@ class Table {
                 }
             }
             return count;
+        }
+
+        vector<Row> findRow(ValueComparator comp) const {
+            vector<Row> result;
+            for (const Row& row : this->rowList) {
+                int columnIndex = getFieldIndex(comp.columnName);
+                bool isMatch = false;
+
+                switch (comp.op) {
+                    case LogicalOperator::Equal:
+                        isMatch = row[columnIndex] == comp.valueStr;
+                }
+
+                if (isMatch)
+                    result.push_back(row);
+            }
+
+            return result;
+        }
+
+        void updateRows(const string& columnName, const string& newValue, ValueComparator comp) {
+            vector<Row> rows = findRow(comp);
         }
 };
 
