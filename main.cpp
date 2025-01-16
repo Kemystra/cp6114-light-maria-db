@@ -258,10 +258,9 @@ void extractStr(string);
 void createTable(vector<string> tokens, Table& table);
 void printDatabases();
 void insertIntoTable(vector<string> tokens, Table& table);
+void updateTable(vector<string> tokens, Table& table);
 string selectFromTable(vector<string> tokens, Table& table);
-void updateTable();
 void deleteFromTable();
-void countFromTable();
 
 ValueComparator whereKeywordParser(const vector<string>& tokens, int& index);
 
@@ -642,9 +641,20 @@ string selectFromTable(vector<string> tokens, Table& table) {
 
 }
 
-void updateTable() {
+void updateTable(vector<string> tokens, Table& table ) {
 
+    index = 3
+    
+    string colUpdate = tokens[index];
 
+    index += 2;
+    currToken = tokens[index]; 
+    string newValue = extractStr(curr_token); 
+
+    index ++;
+
+    table.updateRows(colUpdate, newValue, whereKeywordParser(tokens, index));
+    
 }
 
 void deleteFromTable(const vector<string>& tokens, Table& table) {
