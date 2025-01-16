@@ -620,7 +620,7 @@ void extractStr(string token) {
     }
 
     else
-        return token[0];
+        return token;
 }
 
 // -- Processing functions --
