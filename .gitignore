@@ -37,6 +37,7 @@
 
 *.mdb
 !samples/*.mdb
+*.txt
 
 
 # -- -- # 
