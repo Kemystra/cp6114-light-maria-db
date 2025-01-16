@@ -450,7 +450,6 @@ class Table {
             //     return 1; 
             // }
 
-
             for (int row : indexList)
                 rowList[indexList][colIndex] = newValue; 
             
