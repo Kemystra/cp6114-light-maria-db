@@ -445,8 +445,9 @@ class Table {
         }
 
         void deleteRows(ValueComparator comp) {
-            vector<Row> rows = findRow(comp);
-            for (Row& row : this->rowList) {
+            vector<int> row_indices = findRow(comp);
+            for (int i : row_indices) {
+                this->rowList.erase(i);
             }
         }
 };
