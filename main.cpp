@@ -419,19 +419,22 @@ class Table {
             return count;
         }
 
-        vector<Row> findRow(ValueComparator comp) const {
-            vector<Row> result;
-            for (const Row& row : this->rowList) {
+        // Return indices of rows that match the condition
+        vector<int> findRow(ValueComparator comp) const {
+            vector<int> result;
+
+            // Loop through each row, and check if it's
+            for (int i = 0; i < rowList.size(); i++) {
                 int columnIndex = getFieldIndex(comp.columnName);
                 bool isMatch = false;
 
                 switch (comp.op) {
                     case LogicalOperator::Equal:
-                        isMatch = row[columnIndex] == comp.valueStr;
+                        isMatch = rowList[i][columnIndex] == comp.valueStr;
                 }
 
                 if (isMatch)
-                    result.push_back(row);
+                    result.push_back(i);
             }
 
             return result;
@@ -439,6 +442,12 @@ class Table {
 
         void updateRows(const string& columnName, const string& newValue, ValueComparator comp) {
             vector<Row> rows = findRow(comp);
+        }
+
+        void deleteRows(ValueComparator comp) {
+            vector<Row> rows = findRow(comp);
+            for (Row& row : this->rowList) {
+            }
         }
 };
 
