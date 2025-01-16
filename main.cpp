@@ -248,7 +248,6 @@ void printDatabases();
 void insertIntoTable(vector<string> tokens, Table& table);
 void updateTable(vector<string> tokens, Table& table);
 string selectFromTable(vector<string> tokens, Table& table);
-void updateTable();
 void deleteFromTable(const vector<string>& tokens, Table& table);
 
 string formatCSV(vector<string> header, vector<vector<string>> tableData);
@@ -309,7 +308,7 @@ int main (int argc, char *argv[]) {
         else if (statementTokens[0] == "SELECT")
             selectFromTable(statementTokens, table);
         else if (statementTokens[0] == "UPDATE")
-            updateTable();
+            updateTable(statementTokens, table);
         else if (statementTokens[0] == "DELETE")
             deleteFromTable(statementTokens, table);
 
@@ -618,16 +617,15 @@ string selectFromTable(vector<string> tokens, Table& table) {
 }
 
 void updateTable(vector<string> tokens, Table& table ) {
-
-    index = 3
+    int index = 3;
     
     string colUpdate = tokens[index];
 
     index += 2;
-    currToken = tokens[index]; 
-    string newValue = extractStr(curr_token); 
+    string currToken = tokens[index];
+    string newValue = extractStr(currToken);
 
-    index ++;
+    index++;
 
     table.updateRows(colUpdate, newValue, whereKeywordParser(tokens, index));
     
