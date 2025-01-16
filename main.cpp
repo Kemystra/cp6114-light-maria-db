@@ -480,7 +480,7 @@ void createTable(vector<string> tokens, Table& table);
 void printDatabases();
 void insertIntoTable(vector<string> tokens, Table& table);
 void selectFromTable();
-void updateTable();
+void updateTable(vector<string> tokens, Table& table);
 void deleteFromTable();
 void countFromTable();
 
@@ -822,6 +822,22 @@ void insertIntoTable(vector<string> tokens, Table& table) {
 
 void selectFromTable() {
 
+}
+
+void updateTable(vector<string> tokens, Table& table ) {
+
+    index = 3
+    
+    string colUpdate = tokens[index];
+
+    index += 2;
+    currToken = tokens[index]; 
+    string newValue = extractStr(curr_token); 
+
+    index ++;
+
+    table.updateRows(colUpdate, newValue, whereKeywordParser(tokens, index));
+    
 }
 
 
