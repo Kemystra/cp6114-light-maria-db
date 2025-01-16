@@ -27,7 +27,7 @@ using namespace std;
 typedef vector<string> Row;
 
 // -- Constant Definitions --
-const string KEYWORDS[] = {
+const string ACTION_KEYWORDS[] = {
     "CREATE",
     "DATABASES",
     "TABLE",
@@ -37,20 +37,28 @@ const string KEYWORDS[] = {
     "VALUES",
     "SELECT",
     "FROM",
-    "INT",
-    "TEXT",
     "UPDATE",
     "SET",
     "WHERE",
     "DELETE",
     "FROM",
+};
+
+const string TYPE_KEYWORDS[] = {
+    "TEXT",
+    "INT"
+};
+
+const string FUNCTION_KEYWORDS[] = {
     "COUNT"
 };
 
 // Even though each string has a different sizes
 // The class string only stores the POINTER to the actual string
 // so the size is constant
-const int KEYWORDS_SIZE = sizeof(KEYWORDS) / sizeof(KEYWORDS[0]);
+const int ACTION_KEYWORDS_SIZE = sizeof(ACTION_KEYWORDS) / sizeof(ACTION_KEYWORDS[0]);
+const int TYPE_KEYWORDS_SIZE = sizeof(TYPE_KEYWORDS) / sizeof(TYPE_KEYWORDS[0]);
+const int FUNCTION_KEYWORDS_SIZE = sizeof(FUNCTION_KEYWORDS) / sizeof(FUNCTION_KEYWORDS[0]);
 
 // Open and close parentheses, wildcard, comma, and semicolon
 const char SPECIAL_CHARACTERS[] = {
