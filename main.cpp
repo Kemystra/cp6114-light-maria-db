@@ -82,7 +82,6 @@ enum FieldDataType {
 struct FieldData {
     string name;
     FieldDataType dataType;
-    int columnIndex;
 };
 
 enum LogicalOperator {
@@ -152,6 +151,10 @@ class Table {
             exit(1);
         }
 
+        vector<FieldData> getAllFieldData() const{
+            return fieldDataList;
+        }
+
         int getFieldIndex(const string& fieldName) const {
             for (int i = 0; i < fieldDataList.size(); i++) {
                 if(fieldDataList[i].name == fieldName)
@@ -177,246 +180,21 @@ class Table {
             // }
         }
 
-        void selectRows() {}
+        vector<Row> selectRows(string column) {
+            vector<Row> tableData;
+            if(column == "*"){
+                return rowList;
+            } else {
+                int fieldDataIndex = getFieldIndex(column);
+                for(int i=0; i<rowList.size();i++){
+                    tableData[0].push_back(rowList[i][fieldDataIndex]);
+                }
+                return tableData;
+            }
+        }
+
         void insertRows(Row row) {
             rowList.push_back(row);
-        }
-
-        string printTable(string columnsName) {
-            string print = "";
-            //version 1 : csv format
-            if(columnsName == "*"){
-                // print the table header
-                for(int i=0; i<fieldDataList.size(); i++){
-                    print += fieldDataList[i].name;
-                    if(i != fieldDataList.size()-1){
-                        print += ',';
-                    }
-                }
-                print += '\n';
-                //print the table data
-                int membersTotal = dataInt[0].size();
-                for(int i=0; i < membersTotal ; i++){
-                    for(int j=0; j<fieldDataList.size(); j++){
-                        int columnIndex = fieldDataList[j].columnIndex;
-                        if(fieldDataList[j].dataType == FieldDataType::INT){
-                            if (dataInt[columnIndex][i] == -99){
-                                print += "NULL";
-                            } else
-                                print += to_string(dataInt[columnIndex][i]);
-                        } else {
-                            print += dataStr[columnIndex][i];
-                        }
-                        if(j != fieldDataList.size()-1){
-                            print += ',';
-                        }
-                    }
-                    if( i!= membersTotal-1)
-                        print += '\n';
-                }
-            } else {
-                FieldData fd;
-                fd.columnIndex = -1;
-                for(int i=0; i<fieldDataList.size();i++){
-                    if(columnsName == fieldDataList[i].name){
-                        fd.columnIndex = fieldDataList[i].columnIndex;
-                        fd.dataType = fieldDataList[i].dataType;
-                        break;
-                    }
-                }
-                print += columnsName + '\n';
-                if(fd.dataType == FieldDataType::INT){
-                    for(int i=0; i<dataInt[fd.columnIndex].size();i++){
-                        if(dataInt[fd.columnIndex][i] != -99){
-                            print += to_string(dataInt[fd.columnIndex][i])+'\n';
-                        }
-                    }
-                    print.pop_back();
-                } else {
-                    for(int i=0; i<dataStr[fd.columnIndex].size();i++){
-                        if(dataStr[fd.columnIndex][i] != "NULL"){
-                            print += dataStr[fd.columnIndex][i]+'\n';
-                        }
-                    }
-                    print.pop_back();
-                }
-            }
-
-            //version 2 : table format
-
-            // calculate the highest count
-            vector<int> highestCount;
-            for(int i=0; i<fieldDataList.size();i++){
-                highestCount.push_back(fieldDataList[i].name.size());
-            }
-            for(int i=0; i<fieldDataList.size();i++){
-                int columnIndex = fieldDataList[i].columnIndex;
-                if(fieldDataList[i].dataType == FieldDataType::INT){
-                    for(int j=0; j<dataInt[columnIndex].size(); j++){
-                        if(dataInt[columnIndex][j] != -99){
-                            int count = to_string(dataInt[columnIndex][j]).size();
-                            if(count > highestCount[i]){
-                                highestCount[i] = count;
-                            }
-                        }
-                    }
-                } else {
-                    for(int j=0; j<dataStr[columnIndex].size(); j++){
-                        if(dataStr[columnIndex][j] != "NULL"){
-                            int count = dataStr[columnIndex][j].size();
-                            if(count > highestCount[i]){
-                                highestCount[i] = count;
-                            }
-                        }
-                    }
-                }
-            }
-            //print the table header
-            if(columnsName == "*"){
-                print += '\n';
-                for(int i=0;i<highestCount.size();i++){
-                    print += '+';
-                    for(int j=0;j<highestCount[i] +2;j++){
-                        print += '-';
-                    }
-                }
-                print += "+\n";
-                for(int i=0;i<fieldDataList.size();i++){
-                    print += "| " + fieldDataList[i].name;
-                    for(int j=0;j<highestCount[i]-fieldDataList[i].name.size();j++){
-                        print += ' ';
-                    }
-                    print += " ";
-                }
-                print += "|\n";
-                for(int i=0;i<highestCount.size();i++){
-                    print +='+';
-                    for(int j=0;j<highestCount[i]+2;j++){
-                        print += '-';
-                    }
-                }
-                print += "+\n";
-
-
-                //print table data
-                int membersTotal = dataInt[0].size();
-                for(int i=0; i < membersTotal ; i++){
-                    for(int j=0; j<fieldDataList.size(); j++){
-                        int columnIndex = fieldDataList[j].columnIndex;
-                        if(fieldDataList[j].dataType == FieldDataType::INT){
-                            if (dataInt[columnIndex][i] == -99){
-                                print+= "| NULL";
-                                for(int k=0;k<highestCount[j]-4;k++){
-                                    print += ' ';
-                                }
-                            } else
-                                print += "| ";
-                                for(int k=0;k<highestCount[j]-to_string(dataInt[columnIndex][i]).size();k++){
-                                    print += ' ';
-                                }
-                                print += to_string(dataInt[columnIndex][i]) ;
-                        } else {
-                            print += "| " + dataStr[columnIndex][i];
-                            for(int k=0;k<highestCount[j]-dataStr[columnIndex][i].size();k++){
-                                print += ' ';
-                            }
-                        }
-                        print += " ";
-                    }
-                    print+= "|\n";
-                }
-                for(int i=0;i<highestCount.size();i++){
-                    print += '+';
-                    for(int j=0;j<highestCount[i]+2;j++){
-                        print += '-';
-                    }
-                }
-                print += "+";
-            } else {
-                int highestCountIndex = -1;
-                int columnIndex = -1;
-                for(int i = 0; i<fieldDataList.size();i++){
-                    if(columnsName == fieldDataList[i].name){
-                        highestCountIndex = i;
-                        columnIndex = fieldDataList[i].columnIndex;
-                        break;
-                    }
-                }
-                print += '\n';
-                // print header
-                print += '+';
-                for(int i=0; i<highestCount[highestCountIndex]+2 ;i++){
-                    print += '-';
-                }
-                print += "+\n";
-                print += "| " + columnsName;
-                for(int i=0;i<highestCount[highestCountIndex] - columnsName.size();i++){
-                    print += ' ';
-                }
-                print += " |\n";
-                print += '+';
-                for(int i=0; i<highestCount[highestCountIndex]+2 ;i++){
-                    print += '-';
-                }
-                print += "+\n";
-                // print data
-                if(fieldDataList[highestCountIndex].dataType == FieldDataType::INT){
-                    for(int i=0; i<dataInt[columnIndex].size();i++){
-                        if(dataInt[columnIndex][i] != -99){
-                            print += "| ";
-                            for(int j=0; j<highestCount[highestCountIndex]-to_string(dataInt[columnIndex][i]).size();j++){
-                                print += ' ';
-                            }
-                            print += to_string(dataInt[columnIndex][i]) + " |\n";
-                        }
-                    }
-                } else {
-                    for(int i=0; i<dataStr[columnIndex].size();i++){
-                        if(dataStr[columnIndex][i] != "NULL"){
-                            print += "| " + dataStr[columnIndex][i];
-                            for(int j=0; j<highestCount[highestCountIndex]-dataStr[columnIndex][i].size();j++){
-                                print += ' ';
-                            }
-                            print += " |\n";
-                        }
-                    }
-                }
-                print += '+';
-                for(int i=0; i<highestCount[highestCountIndex]+2 ;i++){
-                    print += '-';
-                }
-                print += "+";
-            }
-
-            return print;
-        }
-
-        int count(string columnsName){
-            int count = 0;
-            if(columnsName == "*"){
-                count = dataInt[0].size();
-            } else {
-                for(int i=0; i<fieldDataList.size(); i++){
-                    if(columnsName == fieldDataList[i].name){
-                        int columnIndex = fieldDataList[i].columnIndex;
-                        if(fieldDataList[i].dataType == FieldDataType::INT){
-                            for(int j=0; j<dataInt[columnIndex].size(); j++){
-                                if(dataInt[columnIndex][j] != -99){
-                                    count++;
-                                }
-                            }
-                        } else {
-                            for(int j=0; j<dataStr[columnIndex].size(); j++){
-                                if(dataStr[columnIndex][j] != "NULL"){
-                                    count++;
-                                }
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-            return count;
         }
 
         // Return indices of rows that match the condition
@@ -458,8 +236,9 @@ class Table {
         }
 
         void deleteRows(ValueComparator comp) {
-            vector<Row> rows = findRow(comp);
-            for (Row& row : this->rowList) {
+            vector<int> row_indices = findRow(comp);
+            for (int i : row_indices) {
+                this->rowList.erase(i);
             }
         }
 };
@@ -479,10 +258,11 @@ void extractStr(string);
 void createTable(vector<string> tokens, Table& table);
 void printDatabases();
 void insertIntoTable(vector<string> tokens, Table& table);
-void selectFromTable();
 void updateTable(vector<string> tokens, Table& table);
+string selectFromTable(vector<string> tokens, Table& table);
 void deleteFromTable();
-void countFromTable();
+
+ValueComparator whereKeywordParser(const vector<string>& tokens, int& index);
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
@@ -525,29 +305,27 @@ int main (int argc, char *argv[]) {
         vector<string> statementTokens;
         stringToTokens(rawStatement, statementTokens);
 
-        for (int i = 0; i < statementTokens.size(); i++) {
-            if (statementTokens[0] == "CREATE")
-            {
-                if (statementTokens[1] == "TABLE") 
-                    createTable(statementTokens, table);
-            }
-            else if (statementTokens[i] == "TABLES")
-                cout << table.getName() << endl;
-            else if (statementTokens[i] == "DATABASES")
-                printDatabases();
-            else if (statementTokens[i] == "INSERT")
-                insertIntoTable(statementTokens, table);
-            // else if (statementToken[i] == "VALUES")
-            else if (statementTokens[i] == "SELECT")
-                selectFromTable();
-            else if (statementTokens[i] == "UPDATE")
-                updateTable();
-            else if (statementTokens[i] == "DELETE")
-                deleteFromTable();
-            else if (statementTokens[i] == "COUNT")
-                countFromTable();
-                
+        if (statementTokens[0] == "CREATE")
+        {
+            if (statementTokens[1] == "TABLE") 
+                createTable(statementTokens, table);
         }
+        else if (statementTokens[0] == "TABLES")
+            cout << table.getName() << endl;
+        else if (statementTokens[0] == "DATABASES")
+            printDatabases();
+        else if (statementTokens[0] == "INSERT")
+            insertIntoTable(statementTokens, table);
+        // else if (statementToken[i] == "VALUES")
+        else if (statementTokens[0] == "SELECT")
+            selectFromTable(statementTokens, table);
+        else if (statementTokens[0] == "UPDATE")
+            updateTable();
+        else if (statementTokens[0] == "DELETE")
+            deleteFromTable();
+        else if (statementTokens[0] == "COUNT")
+            countFromTable();
+
         cout << '\n';
 
         // Empty table to store value
@@ -820,7 +598,46 @@ void insertIntoTable(vector<string> tokens, Table& table) {
 }
 
 
-void selectFromTable() {
+string selectFromTable(vector<string> tokens, Table& table) {
+
+    bool countOrNot = false;
+    string column;
+    
+    //check for last token if it is the name of table
+    if(tokens[tokens.size()-1] != table.getName()){
+        cout << "TableError: Table not found." << endl;
+        exit(1);
+    }
+
+    if(tokens[1] == "COUNT"){
+        countOrNot = true;
+        //take all inside brackets
+        column = tokens[3];
+    } else {
+        column = tokens[1];
+    }
+
+    //take data from table
+    string result = "";
+    vector<Row> tableData;
+    vector<string> header;
+    if(column == "*"){
+        for(FieldData fd : table.getAllFieldData()){
+            header.push_back(fd.name);
+        }
+    } else {
+        header.push_back(column);
+    }
+    
+
+    tableData = table.selectRows(column);
+
+    if(countOrNot){
+        result = to_string(tableData.size());
+    } else {
+        result = formatCSV(header, tableData);
+    }
+    return result;
 
 }
 
@@ -840,9 +657,13 @@ void updateTable(vector<string> tokens, Table& table ) {
     
 }
 
+void deleteFromTable(const vector<string>& tokens, Table& table) {
+    // Since we don't have syntax error checking right now
+    // we can skip directly to WHERE keyword
+    int index = 3;
+    ValueComparator comp = whereKeywordParser(tokens, index);
 
-void deleteFromTable() {
-
+    table.deleteRows(comp);
 }
 
 void countFromTable() {
@@ -871,4 +692,28 @@ ValueComparator whereKeywordParser(const vector<string>& tokens, int& index) {
         comp.valueStr = value;
 
     return comp;
+}
+
+
+string formatCSV(vector<string> header, vector<vector<string>> tableData){
+    string csv="";
+
+    //header
+    for(int i = 0; i < header.size();i++){
+        csv += header[i] + ",";
+    }
+    csv.pop_back();
+    csv += '\n';
+
+    //tableData
+    for(int i = 0; i < tableData.size(); i++){
+        for(int j = 0; j < tableData[i].size(); j++){
+            csv += tableData[i][j] + ",";
+        }
+        csv.pop_back();
+        csv += '\n';
+    }
+
+    return csv;
+
 }
