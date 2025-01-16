@@ -286,6 +286,11 @@ int main (int argc, char *argv[]) {
     string rawStatement;
     Table table("");
     while (getline(inputFile, rawStatement, ';')) {
+        rawStatement = trim(rawStatement);
+        // If the statement is just empty string after trimming, ignore it
+        if (rawStatement == "")
+            continue;
+
         // We need the semicolon to mark end of statement, so I readded it
         rawStatement += ';';
         cout << rawStatement << '\n';
