@@ -811,7 +811,10 @@ void selectFromTable() {
 
 }
 
-void updateTable() {
+void updateTable(const string& columnName, const string& newValue, ValueComparator comp) {
+    vector<Row> rows = findRow(comp);
+
+    
 
 
 }
