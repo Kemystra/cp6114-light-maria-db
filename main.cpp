@@ -287,6 +287,9 @@ int main (int argc, char *argv[]) {
     // We will handle it just like other whitespace, by ignoring it
     string rawStatement;
     Table table("");
+
+    ofstream outputFile;
+
     while (getline(inputFile, rawStatement, ';')) {
         rawStatement = trim(rawStatement);
         // If the statement is just empty string after trimming, ignore it
@@ -303,6 +306,10 @@ int main (int argc, char *argv[]) {
 
         if (statementTokens[0] == "CREATE")
         {
+            // Open the filename as in the 2nd token
+            // Yes I'm lazy, will put in proper function later
+            outputFile.open(statementTokens[1]);
+
             if (statementTokens[1] == "TABLE") 
                 createTable(statementTokens, table);
         }
