@@ -82,7 +82,6 @@ enum FieldDataType {
 struct FieldData {
     string name;
     FieldDataType dataType;
-    int columnIndex;
 };
 
 enum LogicalOperator {
@@ -152,6 +151,10 @@ class Table {
             exit(1);
         }
 
+        vector<FieldData> getAllFieldData() const{
+            return fieldDataList;
+        }
+
         int getFieldIndex(const string& fieldName) const {
             for (int i = 0; i < fieldDataList.size(); i++) {
                 if(fieldDataList[i].name == fieldName)
@@ -177,7 +180,19 @@ class Table {
             // }
         }
 
-        void selectRows() {}
+        vector<Row> selectRows(string column) {
+            vector<Row> tableData;
+            if(column == "*"){
+                return rowList;
+            } else {
+                int fieldDataIndex = getFieldIndex(column);
+                for(int i=0; i<rowList.size();i++){
+                    tableData[0].push_back(rowList[i][fieldDataIndex]);
+                }
+                return tableData;
+            }
+        }
+
         void insertRows(Row row) {
             rowList.push_back(row);
         }
@@ -479,7 +494,7 @@ void extractStr(string);
 void createTable(vector<string> tokens, Table& table);
 void printDatabases();
 void insertIntoTable(vector<string> tokens, Table& table);
-void selectFromTable();
+string selectFromTable(vector<string> tokens, Table& table);
 void updateTable();
 void deleteFromTable();
 void countFromTable();
@@ -525,29 +540,27 @@ int main (int argc, char *argv[]) {
         vector<string> statementTokens;
         stringToTokens(rawStatement, statementTokens);
 
-        for (int i = 0; i < statementTokens.size(); i++) {
-            if (statementTokens[0] == "CREATE")
-            {
-                if (statementTokens[1] == "TABLE") 
-                    createTable(statementTokens, table);
-            }
-            else if (statementTokens[i] == "TABLES")
-                cout << table.getName() << endl;
-            else if (statementTokens[i] == "DATABASES")
-                printDatabases();
-            else if (statementTokens[i] == "INSERT")
-                insertIntoTable(statementTokens, table);
-            // else if (statementToken[i] == "VALUES")
-            else if (statementTokens[i] == "SELECT")
-                selectFromTable();
-            else if (statementTokens[i] == "UPDATE")
-                updateTable();
-            else if (statementTokens[i] == "DELETE")
-                deleteFromTable();
-            else if (statementTokens[i] == "COUNT")
-                countFromTable();
-                
+        if (statementTokens[0] == "CREATE")
+        {
+            if (statementTokens[1] == "TABLE") 
+                createTable(statementTokens, table);
         }
+        else if (statementTokens[0] == "TABLES")
+            cout << table.getName() << endl;
+        else if (statementTokens[0] == "DATABASES")
+            printDatabases();
+        else if (statementTokens[0] == "INSERT")
+            insertIntoTable(statementTokens, table);
+        // else if (statementToken[i] == "VALUES")
+        else if (statementTokens[0] == "SELECT")
+            selectFromTable(statementTokens, table);
+        else if (statementTokens[0] == "UPDATE")
+            updateTable();
+        else if (statementTokens[0] == "DELETE")
+            deleteFromTable();
+        else if (statementTokens[0] == "COUNT")
+            countFromTable();
+
         cout << '\n';
 
         // Empty table to store value
@@ -820,10 +833,53 @@ void insertIntoTable(vector<string> tokens, Table& table) {
 }
 
 
-void selectFromTable() {
+string selectFromTable(vector<string> tokens, Table& table) {
+
+    bool countOrNot = false;
+    string column;
+    
+    //check for last token if it is the name of table
+    if(tokens[tokens.size()-1] != table.getName()){
+        cout << "TableError: Table not found." << endl;
+        exit(1);
+    }
+
+    if(tokens[1] == "COUNT"){
+        countOrNot = true;
+        //take all inside brackets
+        column = tokens[3];
+    } else {
+        column = tokens[1];
+    }
+
+    //take data from table
+    string result = "";
+    vector<Row> tableData;
+    vector<string> header;
+    if(column == "*"){
+        for(FieldData fd : table.getAllFieldData()){
+            header.push_back(fd.name);
+        }
+    } else {
+        header.push_back(column);
+    }
+    
+
+    tableData = table.selectRows(column);
+
+    if(countOrNot){
+        result = to_string(tableData.size());
+    } else {
+        result = formatCSV(header, tableData);
+    }
+    return result;
 
 }
 
+void updateTable() {
+
+
+}
 
 void deleteFromTable() {
 
@@ -855,4 +911,28 @@ ValueComparator whereKeywordParser(const vector<string>& tokens, int& index) {
         comp.valueStr = value;
 
     return comp;
+}
+
+
+string formatCSV(vector<string> header, vector<vector<string>> tableData){
+    string csv="";
+
+    //header
+    for(int i = 0; i < header.size();i++){
+        csv += header[i] + ",";
+    }
+    csv.pop_back();
+    csv += '\n';
+
+    //tableData
+    for(int i = 0; i < tableData.size(); i++){
+        for(int j = 0; j < tableData[i].size(); j++){
+            csv += tableData[i][j] + ",";
+        }
+        csv.pop_back();
+        csv += '\n';
+    }
+
+    return csv;
+
 }
