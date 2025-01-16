@@ -168,16 +168,6 @@ class Table {
         void addColumn(FieldData fd) {
             // Add a new column, and put its index into field
             fieldDataList.push_back(fd);
-
-            // Temporary code to output fieldDataList
-            // for (int i = 0; i < fieldDataList.size(); i++) {
-            // cout << "Field #" << i+1 << '\n';
-            // FieldData field = fieldDataList[i];
-            // cout << "Name: " << field.name << '\n';
-            // cout << "Data Type: " << field.dataType << '\n';
-            // cout << "Column Index: " << field.columnIndex << '\n';
-            // cout << '\n';
-            // }
         }
 
         vector<Row> selectRows(string column) {
@@ -271,8 +261,6 @@ int main (int argc, char *argv[]) {
 
     inputFile.open(inputFileName);
 
-
-
     // These if statements are called 'guard clauses'
     // Instead of nesting code inside multiple 'if', we can detect errors and exit/return immediately
     // This is a very common programming pattern, and it helps to make code more readable
@@ -326,14 +314,7 @@ int main (int argc, char *argv[]) {
             deleteFromTable(statementTokens, table);
 
         cout << '\n';
-
-        // Empty table to store value
-        // Table table("");
-        // if (statementTokens[1] == "TABLE") {
-        //     createTable(statementTokens, table);
-        // }
     }
-
 
     return 0;
 }
@@ -570,11 +551,6 @@ void insertIntoTable(vector<string> tokens, Table& table) {
     }
 
     Row newRow;
-
-    // if (index == -1) {
-    //     cout << "Error : No VALUES keywords found." << endl;
-    //     return;
-    // }
 
     index += 2;
 
