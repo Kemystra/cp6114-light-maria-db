@@ -37,7 +37,13 @@ const string KEYWORDS[] = {
     "SELECT",
     "FROM",
     "INT",
-    "TEXT"
+    "TEXT",
+    "UPDATE",
+    "SET",
+    "WHERE",
+    "DELETE",
+    "FROM",
+    "COUNT"
 };
 
 // Even though each string has a different sizes
@@ -122,20 +128,23 @@ class Table {
             fieldDataList.push_back(fd);
 
             // Temporary code to output fieldDataList
-            /*for (int i = 0; i < fieldDataList.size(); i++) {*/
-            /*    cout << "Field #" << i+1 << '\n';*/
-            /*    FieldData field = fieldDataList[i];*/
-            /*    cout << "Name: " << field.name << '\n';*/
-            /*    cout << "Data Type: " << field.dataType << '\n';*/
-            /*    cout << "Column Index: " << field.columnIndex << '\n';*/
-            /*    cout << '\n';*/
-            /*}*/
+            // for (int i = 0; i < fieldDataList.size(); i++) {
+            // cout << "Field #" << i+1 << '\n';
+            // FieldData field = fieldDataList[i];
+            // cout << "Name: " << field.name << '\n';
+            // cout << "Data Type: " << field.dataType << '\n';
+            // cout << "Column Index: " << field.columnIndex << '\n';
+            // cout << '\n';
+            // }
         }
 
         void selectRows() {}
-        void insertRows() {}
+        void insertRows(Row row) {
+            rowList.push_back(row);
+        }
         void deleteRows() {}
         void updateRows() {}
+
         string printTable(string columnsName) {
             string print = "";
             //version 1 : csv format
@@ -385,15 +394,19 @@ string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
 void createTable(vector<string> tokens, Table& table);
 void printDatabases();
-void insertIntoTable();
+void insertIntoTable(vector<string> tokens, Table& table);
 void selectFromTable();
-
+void updateTable();
+void deleteFromTable();
+void countFromTable();
 
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
     ifstream inputFile;
 
     inputFile.open(inputFileName);
+
+
 
     // These if statements are called 'guard clauses'
     // Instead of nesting code inside multiple 'if', we can detect errors and exit/return immediately
@@ -439,10 +452,16 @@ int main (int argc, char *argv[]) {
             else if (statementTokens[i] == "DATABASES")
                 printDatabases();
             else if (statementTokens[i] == "INSERT")
-                insertIntoTable();
-            // if else (statementToken[i] == "VALUES")
+                insertIntoTable(statementTokens, table);
+            // else if (statementToken[i] == "VALUES")
             else if (statementTokens[i] == "SELECT")
                 selectFromTable();
+            else if (statementTokens[i] == "UPDATE")
+                updateTable();
+            else if (statementTokens[i] == "DELETE")
+                deleteFromTable();
+            else if (statementTokens[i] == "COUNT")
+                countFromTable();
                 
         }
         cout << '\n';
@@ -652,10 +671,57 @@ void printDatabases() {
 
 }
 
-void insertIntoTable() {
+void insertIntoTable(vector<string> tokens, Table& table) {
+    int index = 2;
+
+    for (int i = 0; i < tokens.size(); i++) {
+        if (tokens[i] == "VALUES"){
+            index = i;
+            break;
+        }
+    }
+
+    Row newRow;
+
+    // if (index == -1) {
+    //     cout << "Error : No VALUES keywords found." << endl;
+    //     return;
+    // }
+
+    index += 2;
+
+    vector<string> values;
+    int valEnd = tokens.size() - 1;
+
+    while (tokens[index] != ")") {
+
+        if (tokens[index] == "," || tokens[index] != "'") {
+            index++;
+            continue;
+        }
+
+        else
+            newRow.push_back(values[index]);
+        
+        index++;
+    }
+
+    table.insertRows(newRow);
+}
+
+
+void selectFromTable() {
 
 }
 
-void selectFromTable() {
+void updateTable() {
+
+}
+
+void deleteFromTable() {
+
+}
+
+void countFromTable() {
 
 }
