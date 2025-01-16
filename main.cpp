@@ -472,6 +472,8 @@ void updateTable();
 void deleteFromTable();
 void countFromTable();
 
+ValueComparator whereKeywordParser(const vector<string>& tokens, int& index);
+
 int main (int argc, char *argv[]) {
     string inputFileName = "fileInput1.mdb";
     ifstream inputFile;
@@ -817,8 +819,13 @@ void updateTable() {
 
 }
 
-void deleteFromTable() {
+void deleteFromTable(const vector<string>& tokens, Table& table) {
+    // Since we don't have syntax error checking right now
+    // we can skip directly to WHERE keyword
+    int index = 3;
+    ValueComparator comp = whereKeywordParser(tokens, index);
 
+    table.deleteRows(comp);
 }
 
 void countFromTable() {
