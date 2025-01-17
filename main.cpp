@@ -306,12 +306,12 @@ int main (int argc, char *argv[]) {
 
         if (statementTokens[0] == "CREATE")
         {
-            // Open the filename as in the 2nd token
-            // Yes I'm lazy, will put in proper function later
-            outputFile.open(statementTokens[1]);
-
             if (statementTokens[1] == "TABLE") 
                 createTable(statementTokens, table);
+            else
+                // Open the filename as in the 2nd token
+                // Yes I'm lazy, will put in proper function later
+                outputFile.open(statementTokens[1]);
         }
         else if (statementTokens[0] == "TABLES")
             result = table.getName();
@@ -326,15 +326,27 @@ int main (int argc, char *argv[]) {
             updateTable(statementTokens, table);
         else if (statementTokens[0] == "DELETE")
             deleteFromTable(statementTokens, table);
+        else
+            continue;
 
-        // Log to terminal and output file (later)
-        cout << ">" << rawStatement << '\n';
-        if (result != "") {
-            cout << result << '\n';
+        // Store full output result
+        string fullOutput = ">" + rawStatement + '\n';
+        if (result.size() > 0) {
+            fullOutput += result + '\n';
         }
 
-        cout << '\n';
+        // Log to terminal and output file (later)
+
+        // IMPORTANT: when writing to cout or an output file,
+        // the data will be stored in a temporary buffer first, before writing them at once
+        // To trigger the actual write, we need to do a 'flush'
+        // Note that 'endl' is actually '\n' and a flush operation
+        cout << fullOutput << endl;
+        outputFile << fullOutput << endl;
     }
+
+    inputFile.close();
+    outputFile.close();
 
     return 0;
 }
