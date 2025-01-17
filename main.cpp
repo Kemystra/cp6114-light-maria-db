@@ -178,9 +178,15 @@ class Table {
             if(column == "*"){
                 return rowList;
             } else {
+                // For now it only supports 1 column name
+                // Later we can use nested for loops for multiple columns
                 int fieldDataIndex = getFieldIndex(column);
                 for(int i=0; i<rowList.size();i++){
-                    tableData[0].push_back(rowList[i][fieldDataIndex]);
+                    // Get the data from each row
+                    Row row = { rowList[i][fieldDataIndex] };
+
+                    // Push each row into tableData
+                    tableData.push_back(row);
                 }
                 return tableData;
             }
