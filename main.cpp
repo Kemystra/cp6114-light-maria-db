@@ -26,6 +26,9 @@ using namespace std;
 // It's just to make part of the code more readable
 typedef vector<string> Row;
 
+// -- Configurations --
+const string INPUT_FILENAME = "fileInput1.mdb";
+
 // -- Constant Definitions --
 const string ACTION_KEYWORDS[] = {
     "CREATE",
@@ -168,16 +171,6 @@ class Table {
         void addColumn(FieldData fd) {
             // Add a new column, and put its index into field
             fieldDataList.push_back(fd);
-
-            // Temporary code to output fieldDataList
-            // for (int i = 0; i < fieldDataList.size(); i++) {
-            // cout << "Field #" << i+1 << '\n';
-            // FieldData field = fieldDataList[i];
-            // cout << "Name: " << field.name << '\n';
-            // cout << "Data Type: " << field.dataType << '\n';
-            // cout << "Column Index: " << field.columnIndex << '\n';
-            // cout << '\n';
-            // }
         }
 
         vector<Row> selectRows(string column) {
@@ -185,9 +178,15 @@ class Table {
             if(column == "*"){
                 return rowList;
             } else {
+                // For now it only supports 1 column name
+                // Later we can use nested for loops for multiple columns
                 int fieldDataIndex = getFieldIndex(column);
                 for(int i=0; i<rowList.size();i++){
-                    tableData[0].push_back(rowList[i][fieldDataIndex]);
+                    // Get the data from each row
+                    Row row = { rowList[i][fieldDataIndex] };
+
+                    // Push each row into tableData
+                    tableData.push_back(row);
                 }
                 return tableData;
             }
@@ -228,17 +227,15 @@ class Table {
             //     return 1; 
             // }
 
-            for (int row : indexList)
-                rowList[indexList][colIndex] = newValue; 
-            
-        }
-
+            for (int i : indexList) {
+                rowList[i][colIndex] = newValue;
+            }
         }
 
         void deleteRows(ValueComparator comp) {
             vector<int> row_indices = findRow(comp);
             for (int i : row_indices) {
-                this->rowList.erase(i);
+                this->rowList.erase(rowList.begin() + i);
             }
         }
 };
@@ -253,24 +250,23 @@ string parseStringLiteral(string &rawStatement, int &char_pos);
 string parseSpecialCharacters(string &rawStatement, int &char_pos);
 
 string trim(const string &s);
-void extractStr(string);
+string extractStr(string);
 
 void createTable(vector<string> tokens, Table& table);
 void printDatabases();
 void insertIntoTable(vector<string> tokens, Table& table);
 void updateTable(vector<string> tokens, Table& table);
 string selectFromTable(vector<string> tokens, Table& table);
-void deleteFromTable();
+void deleteFromTable(const vector<string>& tokens, Table& table);
+
+string formatCSV(vector<string> header, vector<vector<string>> tableData);
 
 ValueComparator whereKeywordParser(const vector<string>& tokens, int& index);
 
 int main (int argc, char *argv[]) {
-    string inputFileName = "fileInput1.mdb";
     ifstream inputFile;
 
-    inputFile.open(inputFileName);
-
-
+    inputFile.open(INPUT_FILENAME);
 
     // These if statements are called 'guard clauses'
     // Instead of nesting code inside multiple 'if', we can detect errors and exit/return immediately
@@ -279,7 +275,7 @@ int main (int argc, char *argv[]) {
     if (!inputFile) {
         // We usually use cout, but for errors it's better to use cerr
         // I'll talk about why later, for now I will use cout
-        cout << "Unable to open input file " << inputFileName << '\n';
+        cout << "Unable to open input file " << INPUT_FILENAME << '\n';
 
         // Indicate exit with failure
         exit(1);
@@ -288,7 +284,7 @@ int main (int argc, char *argv[]) {
     // Check if file is empty
     // Note that EOF is short for End Of File
     if (inputFile.peek() == ifstream::traits_type::eof()) {
-        cout << "File " << inputFileName << " is empty\n";
+        cout << "File " << INPUT_FILENAME << " is empty\n";
         exit(1);
     }
 
@@ -297,44 +293,68 @@ int main (int argc, char *argv[]) {
     // We will handle it just like other whitespace, by ignoring it
     string rawStatement;
     Table table("");
+
+    ofstream outputFile;
+
     while (getline(inputFile, rawStatement, ';')) {
+        rawStatement = trim(rawStatement);
+        // If the statement is just empty string after trimming, ignore it
+        if (rawStatement == "")
+            continue;
+
         // We need the semicolon to mark end of statement, so I readded it
         rawStatement += ';';
-        cout << rawStatement << '\n';
 
         vector<string> statementTokens;
         stringToTokens(rawStatement, statementTokens);
+
+        string result = "";
 
         if (statementTokens[0] == "CREATE")
         {
             if (statementTokens[1] == "TABLE") 
                 createTable(statementTokens, table);
+            else
+                // Open the filename as in the 2nd token
+                // Yes I'm lazy, will put in proper function later
+                outputFile.open(statementTokens[1]);
         }
         else if (statementTokens[0] == "TABLES")
-            cout << table.getName() << endl;
+            result = table.getName();
         else if (statementTokens[0] == "DATABASES")
             printDatabases();
         else if (statementTokens[0] == "INSERT")
             insertIntoTable(statementTokens, table);
         // else if (statementToken[i] == "VALUES")
         else if (statementTokens[0] == "SELECT")
-            selectFromTable(statementTokens, table);
+            result = selectFromTable(statementTokens, table);
         else if (statementTokens[0] == "UPDATE")
-            updateTable();
+            updateTable(statementTokens, table);
         else if (statementTokens[0] == "DELETE")
-            deleteFromTable();
-        else if (statementTokens[0] == "COUNT")
-            countFromTable();
+            deleteFromTable(statementTokens, table);
+        else
+            continue;
 
-        cout << '\n';
+        // Store full output result
+        string fullOutput = ">" + rawStatement + '\n';
+        if (result.size() > 0) {
+            fullOutput += result + '\n';
+        }
 
-        // Empty table to store value
-        // Table table("");
-        // if (statementTokens[1] == "TABLE") {
-        //     createTable(statementTokens, table);
-        // }
+        // Log to terminal and output file (later)
+
+        // IMPORTANT: when writing to cout or an output file,
+        // the data will be stored in a temporary buffer first, before writing them at once
+        // To trigger the actual write, we need to do a 'flush'
+        // By default it will be done when the program closes
+        // But for reassurance, we can trigger it ourselves
+        // Note that 'endl' is actually equivalent to '\n' << std::flush;
+        cout << fullOutput << endl;
+        outputFile << fullOutput << endl;
     }
 
+    inputFile.close();
+    outputFile.close();
 
     return 0;
 }
@@ -491,7 +511,7 @@ string parseSpecialCharacters(string &rawStatement, int &char_pos) {
     exit(1);
 }
 
-void extractStr(string token) {
+string extractStr(string token) {
 
     if (token[0] == '\'') {
         return (token.substr(1, token.size()-2));
@@ -572,24 +592,19 @@ void insertIntoTable(vector<string> tokens, Table& table) {
 
     Row newRow;
 
-    // if (index == -1) {
-    //     cout << "Error : No VALUES keywords found." << endl;
-    //     return;
-    // }
-
     index += 2;
 
     vector<string> values;
 
     while (tokens[index] != ")") {
-        currToken = tokens[index];
+        string currToken = tokens[index];
 
         if (currToken == ",") {
             index++;
             continue;
         }
 
-        newRow.push_back(extractStr(curr_token));
+        newRow.push_back(extractStr(currToken));
         
         index++;
     }
@@ -602,9 +617,10 @@ string selectFromTable(vector<string> tokens, Table& table) {
 
     bool countOrNot = false;
     string column;
-    
-    //check for last token if it is the name of table
-    if(tokens[tokens.size()-1] != table.getName()){
+
+    //check for 2nd last token if it is the name of table
+    // Note that the last token is always the semicolon
+    if(tokens[tokens.size()-2] != table.getName()){
         cout << "TableError: Table not found." << endl;
         exit(1);
     }
@@ -642,16 +658,15 @@ string selectFromTable(vector<string> tokens, Table& table) {
 }
 
 void updateTable(vector<string> tokens, Table& table ) {
-
-    index = 3
+    int index = 3;
     
     string colUpdate = tokens[index];
 
     index += 2;
-    currToken = tokens[index]; 
-    string newValue = extractStr(curr_token); 
+    string currToken = tokens[index];
+    string newValue = extractStr(currToken);
 
-    index ++;
+    index++;
 
     table.updateRows(colUpdate, newValue, whereKeywordParser(tokens, index));
     
@@ -664,10 +679,6 @@ void deleteFromTable(const vector<string>& tokens, Table& table) {
     ValueComparator comp = whereKeywordParser(tokens, index);
 
     table.deleteRows(comp);
-}
-
-void countFromTable() {
-
 }
 
 ValueComparator whereKeywordParser(const vector<string>& tokens, int& index) {
@@ -683,14 +694,8 @@ ValueComparator whereKeywordParser(const vector<string>& tokens, int& index) {
     index++;
     comp.op = strToLogicalOps.at(tokens[index]);
 
-    // Get the value, and remove the single quotation if it's a string literal
     index++;
-    string value = tokens[index];
-    if (value[0] == '\'')
-        comp.valueStr = value.substr(1, value.size() - 2);
-    else
-        comp.valueStr = value;
-
+    comp.valueStr = extractStr(tokens[index]);
     return comp;
 }
 
@@ -714,6 +719,9 @@ string formatCSV(vector<string> header, vector<vector<string>> tableData){
         csv += '\n';
     }
 
-    return csv;
+    // Remove the last newline
+    // Let main() handle adding that
+    csv.pop_back();
 
+    return csv;
 }
