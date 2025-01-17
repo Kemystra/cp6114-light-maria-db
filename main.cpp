@@ -346,7 +346,9 @@ int main (int argc, char *argv[]) {
         // IMPORTANT: when writing to cout or an output file,
         // the data will be stored in a temporary buffer first, before writing them at once
         // To trigger the actual write, we need to do a 'flush'
-        // Note that 'endl' is actually '\n' and a flush operation
+        // By default it will be done when the program closes
+        // But for reassurance, we can trigger it ourselves
+        // Note that 'endl' is actually equivalent to '\n' << std::flush;
         cout << fullOutput << endl;
         outputFile << fullOutput << endl;
     }
@@ -717,6 +719,9 @@ string formatCSV(vector<string> header, vector<vector<string>> tableData){
         csv += '\n';
     }
 
-    return csv;
+    // Remove the last newline
+    // Let main() handle adding that
+    csv.pop_back();
 
+    return csv;
 }
