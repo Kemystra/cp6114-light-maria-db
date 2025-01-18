@@ -28,7 +28,7 @@ using namespace std;
 typedef vector<string> Row;
 
 // -- Configurations --
-const string INPUT_FILENAME = "fileInput1.mdb";
+const string INPUT_FILENAME = "fileInput2.mdb";
 
 // -- Constant Definitions --
 const string ACTION_KEYWORDS[] = {
@@ -326,7 +326,6 @@ int main (int argc, char *argv[]) {
             printDatabases();
         else if (statementTokens[0] == "INSERT")
             insertIntoTable(statementTokens, table);
-        // else if (statementToken[i] == "VALUES")
         else if (statementTokens[0] == "SELECT")
             result = selectFromTable(statementTokens, table);
         else if (statementTokens[0] == "UPDATE")
