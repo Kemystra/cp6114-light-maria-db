@@ -28,7 +28,7 @@ using namespace std;
 typedef vector<string> Row;
 
 // -- Configurations --
-const string INPUT_FILENAME = "fileInput2.mdb";
+const string INPUT_FILENAME = "fileInput1.mdb";
 
 // -- Constant Definitions --
 const string ACTION_KEYWORDS[] = {
