@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <filesystem>
 
 using namespace std;
 
@@ -577,7 +578,9 @@ void createTable(vector<string> tokens, Table& table) {
 }
 
 void printDatabases() {
+    auto currPath = filesystem::current_path();
 
+    cout << currPath << "\n"; 
 }
 
 void insertIntoTable(vector<string> tokens, Table& table) {
