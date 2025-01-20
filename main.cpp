@@ -254,7 +254,7 @@ string trim(const string &s);
 string extractStr(string);
 
 void createTable(vector<string> tokens, Table& table);
-void printDatabases(string);
+string printDatabases(const string&);
 void insertIntoTable(vector<string> tokens, Table& table);
 void updateTable(vector<string> tokens, Table& table);
 string selectFromTable(vector<string> tokens, Table& table);
@@ -323,7 +323,7 @@ int main (int argc, char *argv[]) {
         else if (statementTokens[0] == "TABLES")
             result = table.getName();
         else if (statementTokens[0] == "DATABASES")
-            printDatabases(INPUT_FILENAME);
+            printDatabases("INPUT_FILENAME");
         else if (statementTokens[0] == "INSERT")
             insertIntoTable(statementTokens, table);
         else if (statementTokens[0] == "SELECT")
@@ -576,10 +576,17 @@ void createTable(vector<string> tokens, Table& table) {
     }
 }
 
-void printDatabases(string fileName) {
-    auto currPath = filesystem::current_path();
+string printDatabases(const string& fileName) {
+    // filesystem::path currPath = filesystem::current_path();
 
-    cout << currPath / fileName << "\n"; 
+    // filesystem::path fullPath =  (currPath / fileName).string(); 
+    auto currFile = filesystem::path("../fileInput1.mdb");
+
+    auto fullPath = filesystem::canonical(currFile);
+
+    cout << fullPath << "\n";
+
+    return fullPath.string();
 }
 
 void insertIntoTable(vector<string> tokens, Table& table) {
