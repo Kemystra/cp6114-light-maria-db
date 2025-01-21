@@ -323,7 +323,7 @@ int main (int argc, char *argv[]) {
         else if (statementTokens[0] == "TABLES")
             result = table.getName();
         else if (statementTokens[0] == "DATABASES")
-            result = printDatabases("INPUT_FILENAME");
+            result = printDatabases(INPUT_FILENAME);
         else if (statementTokens[0] == "INSERT")
             insertIntoTable(statementTokens, table);
         else if (statementTokens[0] == "SELECT")
@@ -577,10 +577,7 @@ void createTable(vector<string> tokens, Table& table) {
 }
 
 string printDatabases(const string& fileName) {
-    // filesystem::path currPath = filesystem::current_path();
-
-    // filesystem::path fullPath =  (currPath / fileName).string(); 
-    auto currFile = filesystem::path("..//fileInput1.mdb");
+    auto currFile = filesystem::path(fileName);
 
     auto fullPath = filesystem::weakly_canonical(currFile);  //using weakly_canonical cus its less stricter than canonical - won't terminate over some parts of path missing
 
