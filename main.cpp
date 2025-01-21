@@ -582,7 +582,7 @@ string printDatabases(const string& fileName) {
     // filesystem::path fullPath =  (currPath / fileName).string(); 
     auto currFile = filesystem::path("..//fileInput1.mdb");
 
-    auto fullPath = filesystem::weakly_canonical(currFile);
+    auto fullPath = filesystem::weakly_canonical(currFile);  //using weakly_canonical cus its less stricter than canonical - won't terminate over some parts of path missing
 
     return fullPath.string();
 }
