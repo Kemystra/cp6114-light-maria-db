@@ -18,6 +18,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <filesystem>
 
 using namespace std;
 
@@ -253,7 +254,7 @@ string trim(const string &s);
 string extractStr(string);
 
 void createTable(vector<string> tokens, Table& table);
-void printDatabases();
+string printDatabases(const string&);
 void insertIntoTable(vector<string> tokens, Table& table);
 void updateTable(vector<string> tokens, Table& table);
 string selectFromTable(vector<string> tokens, Table& table);
@@ -322,10 +323,9 @@ int main (int argc, char *argv[]) {
         else if (statementTokens[0] == "TABLES")
             result = table.getName();
         else if (statementTokens[0] == "DATABASES")
-            printDatabases();
+            result = printDatabases(INPUT_FILENAME);
         else if (statementTokens[0] == "INSERT")
             insertIntoTable(statementTokens, table);
-        // else if (statementToken[i] == "VALUES")
         else if (statementTokens[0] == "SELECT")
             result = selectFromTable(statementTokens, table);
         else if (statementTokens[0] == "UPDATE")
@@ -576,8 +576,12 @@ void createTable(vector<string> tokens, Table& table) {
     }
 }
 
-void printDatabases() {
+string printDatabases(const string& fileName) {
+    auto currFile = filesystem::path(fileName);
 
+    auto fullPath = filesystem::weakly_canonical(currFile);  //using weakly_canonical cus its less stricter than canonical - won't terminate over some parts of path missing
+
+    return fullPath.string();
 }
 
 void insertIntoTable(vector<string> tokens, Table& table) {
