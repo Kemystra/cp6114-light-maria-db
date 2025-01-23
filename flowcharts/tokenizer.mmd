@@ -1,0 +1,19 @@
+ flowchart TD
+    A[Start: Input Statement String] --> B{Iterate Through Characters}
+    B --> |Word Character| C[Read Consecutive Word Characters]
+    B --> |Number| D[Read Consecutive Numbers]
+    B --> |Quotation Mark| E[Read Content Between Quotation Marks]
+    B --> |Special Character| F[Store Single Special Character]
+    B --> |Other| G{Check SPECIAL_CHARACTERS}
+    
+    C --> H[Add to statementTokens]
+    D --> H
+    E --> H
+    F --> H
+    
+    G --> |In List| F
+    G --> |Not in List| I[Output 'Unknown token']
+    
+    H --> B
+    B --> |End of String| J[Return statementTokens]
+    I --> K[Exit with Failure]
