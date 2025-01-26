@@ -1,0 +1,16 @@
+flowchart TD
+    A[Start] --> B[Initialize csv to empty string]
+    B --> C{For each header's column string literal}
+    C --> D[Add header's column literal to csv with ',']
+    D --> E[Remove last ',' from csv]
+    E --> F[Add newline character to csv]
+    F --> C
+    F --> G{For each row in tableData}
+    G --> H{For each column in tableData}
+    H --> I[Add string data to csv with ',']
+    I --> H
+    I --> J[Remove last ',' from row]
+    J --> K[Add newline character to row in csv]
+    K --> G
+    K --> L[Return csv]
+    L --> M[End]

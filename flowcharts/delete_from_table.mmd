@@ -1,0 +1,5 @@
+flowchart TD
+    A[Start] --> B[Get to the WHERE keyword token]
+    B --> C["Call whereKeywordParser(tokens, index) and store in ValueComparator"]
+    C --> D["Call table.deleteRows(ValueComparator)"]
+    D --> E[End]

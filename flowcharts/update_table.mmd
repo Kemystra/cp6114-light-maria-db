@@ -1,0 +1,9 @@
+flowchart TD
+    A[Start] --> B[Set index to 3]
+    B --> C[Set colUpdate to current index token]
+    C --> D[Increment index by 2]
+    D --> E[Set currToken to current index token]
+    E --> F["Set newValue to extractStr(currToken)"]
+    F --> G[Increment index]
+    G --> H["Call updateRows with colUpdate, newValue, whereKeywordParser(tokens, index)"]
+    H --> I[End]
