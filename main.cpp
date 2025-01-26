@@ -6,9 +6,9 @@
 // Tutorial Section : T11L
 // Trimester : 2430 
 // Member_1 : 242UC240JF | Izzminhal Akmal Bin Norhisyam | izzminhal.akmal.norhisyam1@student.mmu.edu.my | +60 11-4034 8650
-// Member_1 : 243UC247CJ | Aimi Binti Mohd Faizal | aimi.mohd.faizal@student.mmu.edu.my | +60 13-907 1648
-// Member_1 : 243UC247DP | Muhammad Afiq Bin Shahrin | muhammad.afiq.shahrin@student.mmu.edu.my | +60 18-977 0080
-// Member_1 : 242UC240JF | Low Eng Sern | low.eng.sern@student.mmu.edu.my | +60 11-2150 0218
+// Member_2 : 243UC247CJ | Aimi Binti Mohd Faizal | aimi.mohd.faizal@student.mmu.edu.my | +60 13-907 1648
+// Member_3 : 243UC247DP | Muhammad Afiq Bin Shahrin | muhammad.afiq.shahrin@student.mmu.edu.my | +60 18-977 0080
+// Member_4 : 242UC240JF | Low Eng Sern | low.eng.sern@student.mmu.edu.my | +60 11-2150 0218
 
 // ********************************************************************************
 
@@ -28,41 +28,9 @@ using namespace std;
 typedef vector<string> Row;
 
 // -- Configurations --
-const string INPUT_FILENAME = "fileInput1.mdb";
+const string INPUT_FILENAME = "fileInput3.mdb";
 
 // -- Constant Definitions --
-const string ACTION_KEYWORDS[] = {
-    "CREATE",
-    "DATABASES",
-    "TABLE",
-    "TABLES",
-    "INSERT",
-    "INTO",
-    "VALUES",
-    "SELECT",
-    "FROM",
-    "UPDATE",
-    "SET",
-    "WHERE",
-    "DELETE",
-    "FROM",
-};
-
-const string TYPE_KEYWORDS[] = {
-    "TEXT",
-    "INT"
-};
-
-const string FUNCTION_KEYWORDS[] = {
-    "COUNT"
-};
-
-// Even though each string has a different sizes
-// The class string only stores the POINTER to the actual string
-// so the size is constant
-const int ACTION_KEYWORDS_SIZE = sizeof(ACTION_KEYWORDS) / sizeof(ACTION_KEYWORDS[0]);
-const int TYPE_KEYWORDS_SIZE = sizeof(TYPE_KEYWORDS) / sizeof(TYPE_KEYWORDS[0]);
-const int FUNCTION_KEYWORDS_SIZE = sizeof(FUNCTION_KEYWORDS) / sizeof(FUNCTION_KEYWORDS[0]);
 
 // Open and close parentheses, wildcard, comma, and semicolon
 const char SPECIAL_CHARACTERS[] = {
@@ -244,7 +212,7 @@ class Table {
 // -- Function Prototype --
 // Technically, you don't need to put the parameter name here
 // But it's good for documentation
-void stringToTokens(string rawStatement, vector<string> &tokenList);
+void tokenizer(string rawStatement, vector<string> &tokenList);
 string parseWord(string &rawStatement, int &char_pos);
 string parseNumberLiteral(string &rawStatement, int &char_pos);
 string parseStringLiteral(string &rawStatement, int &char_pos);
@@ -260,7 +228,7 @@ void updateTable(vector<string> tokens, Table& table);
 string selectFromTable(vector<string> tokens, Table& table);
 void deleteFromTable(const vector<string>& tokens, Table& table);
 
-string formatCSV(vector<string> header, vector<vector<string>> tableData);
+string formatCSV(const vector<string>& header, const vector<vector<string>>& tableData);
 
 ValueComparator whereKeywordParser(const vector<string>& tokens, int& index);
 
@@ -307,7 +275,7 @@ int main (int argc, char *argv[]) {
         rawStatement += ';';
 
         vector<string> statementTokens;
-        stringToTokens(rawStatement, statementTokens);
+        tokenizer(rawStatement, statementTokens);
 
         string result = "";
 
@@ -379,7 +347,7 @@ string trim(const string &s) {
 }
 
 // -- The lexer --
-void stringToTokens(string rawStatement, vector<string> &tokenList) {
+void tokenizer(string rawStatement, vector<string> &tokenList) {
     int char_pos = 0;
     while (char_pos < rawStatement.length()) {
         string token = "";
@@ -595,9 +563,7 @@ void insertIntoTable(vector<string> tokens, Table& table) {
     }
 
     Row newRow;
-
     index += 2;
-
     vector<string> values;
 
     while (tokens[index] != ")") {
@@ -609,7 +575,6 @@ void insertIntoTable(vector<string> tokens, Table& table) {
         }
 
         newRow.push_back(extractStr(currToken));
-        
         index++;
     }
 
@@ -618,7 +583,6 @@ void insertIntoTable(vector<string> tokens, Table& table) {
 
 
 string selectFromTable(vector<string> tokens, Table& table) {
-
     bool countOrNot = false;
     string column;
 
@@ -673,7 +637,6 @@ void updateTable(vector<string> tokens, Table& table ) {
     index++;
 
     table.updateRows(colUpdate, newValue, whereKeywordParser(tokens, index));
-    
 }
 
 void deleteFromTable(const vector<string>& tokens, Table& table) {
@@ -704,7 +667,7 @@ ValueComparator whereKeywordParser(const vector<string>& tokens, int& index) {
 }
 
 
-string formatCSV(vector<string> header, vector<vector<string>> tableData){
+string formatCSV(const vector<string>& header, const vector<vector<string>>& tableData){
     string csv="";
 
     //header
