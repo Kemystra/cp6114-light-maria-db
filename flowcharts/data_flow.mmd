@@ -1,0 +1,15 @@
+flowchart TD
+A[Input File] --> |Raw Statements| B[Tokenizer]
+B --> |Tokens| G[Token Parse]
+A --> |Raw Statements| K[Output]
+subgraph G[Token Parse]
+C[createTable]
+D[printDatabase]
+E[insertIntoTable]
+F[updateTable]
+H[selectFromTable]
+I[deleteFromTable]
+end
+G --> |Parsed Arguments| J[Table Object]
+J --> |Table data| G
+G --> |Result| K

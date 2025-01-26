@@ -1,0 +1,9 @@
+flowchart TD
+    A[Start] --> B[Trim Whitespaces from Front of String]
+    B --> C[Find First Non-Whitespace Character Index]
+    C --> D[Extract Substring from First Non-Whitespace Character]
+    D --> E[Trim Whitespaces from Back of String]
+    E --> F[Find Last Non-Whitespace Character Index]
+    F --> G[Extract Final Trimmed Substring]
+    G --> H[Return Trimmed String]
+    H --> I[End]
