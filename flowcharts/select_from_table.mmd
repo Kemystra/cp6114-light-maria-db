@@ -1,0 +1,20 @@
+flowchart TD
+    A[Start] --> B[Initialize countOrNot to false]
+    B --> C[Initialize column to store select or select count]
+    C --> D[Error checking: Verify table name is correct]
+    D --> E{"Does tokens contain 'COUNT' token?"}
+    E -->|Yes| F[Set countOrNot to true]
+    E -->|No| H[Take data from table]
+    F --> H
+    H --> I[Initialize result, tableData, header]
+    I --> J{Is column '*'?}
+    J -->|Yes| K[Get all headers from table class]
+    J -->|No| L["Take token literal (e.g., customer_id)"]
+    K --> M["Get table data from table.selectRows(column)"]
+    L --> M
+    M --> N{Is countOrNot true?}
+    N -->|Yes| O[Set result to size of tableData]
+    N -->|No| P["Set result to formatCSV(header, tableData)"]
+    P --> Q[Return result]
+    O --> Q
+    Q --> R[End]

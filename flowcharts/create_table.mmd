@@ -1,0 +1,16 @@
+flowchart TD
+    A[Start] --> B[Set table name from CREATE TABLE statement]
+    B --> C[Begin column definition loop]
+    C --> D[Get field name]
+    D --> E[Get data type]
+    E --> F{Data type matches?}
+    F --> |INT| G[Set to FieldDataType::INT]
+    F --> |TEXT| H[Set to FieldDataType::TEXT]
+    G --> I[Construct FieldData struct]
+    H --> I
+    I --> J[Add column to Table instance]
+    J --> K[Move to next token]
+    K --> L{Next token is closing bracket?}
+    L --> |No| D
+    L --> |Yes| M[End loop]
+    M --> N[End]

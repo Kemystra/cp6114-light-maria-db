@@ -1,0 +1,25 @@
+flowchart TD
+    A[Start] --> B[Initialize Empty statementTokens List]
+    B --> C[Initialize Empty result String]
+    C --> D{Examine Current Character}
+    D --> |Valid Word Character| E[Read Consecutive Word Characters]
+    D --> |Number| F[Read Consecutive Numeric Characters]
+    D --> |Quotation Mark| G[Read Characters Within Quotes]
+    D --> |Special Character| H[Store Single Character]
+    D --> |Invalid Character| I[Output Unknown Token error]
+    
+    E --> J[Store Word in result]
+    F --> K[Store Number in result]
+    G --> L[Store Quoted String in result]
+    H --> M[Store Special Character in result]
+    
+    J --> N[Add result to statementTokens]
+    K --> N
+    L --> N
+    M --> N
+    
+    I --> O[Exit with Failure]
+    
+    N --> |More Characters| D
+    N --> |No More Characters| P[Return statementTokens]
+    P --> Q[End]

@@ -1,0 +1,10 @@
+flowchart TD
+    A[Start] --> B{First Token is WHERE?}
+    B --> |No| C[Exit Early]
+    B --> |Yes| D[Construct Empty ValueComparator Struct]
+    D --> E[Get Column Name]
+    E --> F[Map Operator to LogicalOperator]
+    F --> G["Extract Value Using extractStr()"]
+    G --> H[Return ValueComparator Struct]
+    H --> I[End]
+    C --> I

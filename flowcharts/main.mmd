@@ -1,0 +1,32 @@
+flowchart TD
+    A[Start] --> B[Open Input File]
+    B --> C[File open status]
+    C --> |Good| D[Is file empty?]
+    C --> |Bad| E[Output error]
+    E --> E1[Exit early]
+    D --> |Yes| E
+    D --> |No| H[Instantiate Table Object]
+    H --> F{Process Each Statement}
+    F --> |Statement Empty| F
+    F --> |Statement Not Empty| G[Tokenize Statement]
+    G --> |First Token 'CREATE'| I["Call createTable()"]
+    G --> |First Token 'DATABASES'| J["Call printDatabase()"]
+    G --> |First Token 'TABLES'| K["Call getName()"]
+    G --> |First Token 'INSERT'| L["Call insertIntoTable()"]
+    G --> |First Token 'SELECT'| M["Call selectFromTable()"]
+    G --> |First Token 'UPDATE'| N["Call updateTable()"]
+    G --> |First Token 'DELETE'| O["Call printDatabase()"]
+    I --> F
+    J --> P[Store Result]
+    K --> P
+    L --> F
+    M --> P
+    N --> F
+    O --> F
+    P --> Q[Construct Full Output]
+    Q --> R[Output to Terminal]
+    R --> S[Write to Output File]
+    F --> |No More Statements| T[Close Input File]
+    T --> U[Close Output File]
+    U --> V[Return 0]
+    V --> W[End]

@@ -1,0 +1,18 @@
+flowchart TD
+    A[Start] --> B[Set Initial Index to 2]
+    B --> C[Find VALUES Keyword Token]
+    C --> D[Update Index to VALUES Token]
+    D --> E[Create New Row]
+    E --> F[Increment Index by 2]
+    F --> G[Initialize Empty Values Vector]
+    G --> H{Current Token is closing bracket?}
+    H --> |No| I[Set Current Token to currToken]
+    I --> J{currToken is Comma?}
+    J --> |Yes| K[Increment Index]
+    J --> |No| L[Extract String Literal]
+    K --> H
+    L --> M[Add to New Row]
+    M --> N[Increment Index]
+    N --> H
+    H --> |Yes| O[Insert Row in Table Instance]
+    O --> P[End]
